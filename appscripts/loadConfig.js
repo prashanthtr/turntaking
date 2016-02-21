@@ -5,7 +5,7 @@ define(
   function (utils) {
 
     return function (str, gridRow, gridCol){
-
+      
       var rowLength = utils.getVal(gridRow),
           colLength = utils.getVal(gridCol);
         

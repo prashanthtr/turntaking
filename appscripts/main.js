@@ -1,294 +1,161 @@
 require(
-  ["squareGrid","utils","userGuide","loadConfig","caupdate","structuralCoupling"],
-  function (squareGrid,utils,userGuide,loadConfig, caupdate, structuralCoupling) {
+  ["squareGrid","utils"],
+  function (squareGrid,utils) {
 
     // --------------- Inits ------------------------------
     
     //bittorio display on which display happens
     var bittorio = [];
-    var timer = 0;
-
-    var rowLength = parseInt(document.getElementById('gridRowLength').value),
-        colLength = parseInt(document.getElementById('gridColLength').value),
-        objSize = 5,
-        now = Math.floor(rowLength/2),
-        initNum = 0,
-        stepCount = 0;
+    var timer = -1;
     
     // --------------------- FUNCTIONS ----------------
-
+    
     // Draws the now line on startup and when canvas is redrawn
-    function drawNowLine (rowLength, colLength){
-
+    function drawKeys (){
+      
       var svg = document.getElementById('bittorio');
       var rect = svg.getBoundingClientRect();
-
-      var yLen = (rect.height/rowLength) ;
-      var xLen = (rect.width/colLength);
-
+      var nowy = (rect.height/2-25);
+      
       var lineTop = document.createElementNS("http://www.w3.org/2000/svg", "path");
       var lineBottom = document.createElementNS("http://www.w3.org/2000/svg", "path");
 
-      lineTop.setAttribute("d", "M0 " + now*yLen + " L"+ (colLength*xLen) + " " + now*yLen + " Z");
+      bittorio = squareGrid("bittorio", 13);
+      
+      lineTop.setAttribute("d", "M0 " + nowy + " L"+ rect.width + " " + nowy + " Z");
       lineTop.setAttribute("stroke", "red");
 
-      lineBottom.setAttribute("d", "M0 " + (now+1)*yLen + " L"+ (colLength*xLen) + " " + (now+1)*yLen + " Z");
+      lineBottom.setAttribute("d", "M0 " + (nowy+50) + " L"+ rect.width + " " + (nowy+50) + " Z");
       lineBottom.setAttribute("stroke", "red");
-
+      
       svg.appendChild(lineTop);
       svg.appendChild(lineBottom);
     }
-    
-    // top most row is the initialization row
-    // this has to be initialized and cannot changed afterwards
-    bittorio = squareGrid("bittorio", rowLength,colLength);
-    //toneMatrix = squareGrid("toneMatrix", rowLength+1,colLength+1);
-    drawNowLine(rowLength, colLength);
-    
-    //function that updates the rows after on screen each action
-    function rowChange (rc){
-      for(var row = rc+1; row < bittorio.length; row++) {
-        caupdate.changeFuture(bittorio,row);
-      }
 
+
+    function userGuide (){
+      
+      document.getElementById('userGuide').innerHTML = "<p> The following text provides instructions to play along with the a turn taking system whose goal is provide reflexive interactions. </p>";
+      
+      document.getElementById('userGuide').innerHTML += "<h2> Key mapping </h2> Use the following key mapping to the input a sequence of notes. The notes are toggled on or off to indicate the sequence you have. Black notes are on and grey notes are off. <ol> <li>a - C</li> <li>s - C#</li> <li>d- D</li> <li>f- D#</li> <li>\g- E</li> <li>h - F</li> <li>j - F#</li> <li>k - G</li> <li>l - G#</li> <li>; - A</li> <li>' - A#</li> <li>Enter - B</li> </ol> <h3> R - reset cells, C - clear transcription </h3>";
+
+      document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> Press a certain sequence of notes through keyboard key press. Press start to automatically generate a sequence that is a continuation of the input. Try to continue the interaction";
     }
     
+    drawKeys();
+    
+    // //function that updates the rows after on screen each action
+    // function rowChange (rc){
+    //   for(var row = rc+1; row < bittorio.length; row++) {
+    //     caupdate.changeFuture(bittorio,row);
+    //   }
+
+    // }
+    utils.clear(bittorio);
+    utils.clearTranscription();
     userGuide();
-    utils.init(bittorio,colLength,now);
 
-    // scrolls the CA every time step
-    function caScroll (){
-
-      console.log("timer is" + timer);
-      console.log("Scrolling cells up from end to start");
-      var row =0, col =0;
-      //update only the perturbations from the now+1 to the end
-      for(row=0; row < rowLength-1; row++){
-        for(col=0; col < colLength; col++){
-          
-          bittorio[row][col].state = bittorio[row+1][col].state;
-          bittorio[row][col].userChange = bittorio[row+1][col].userChange;
-          bittorio[row][col].changeColor();
-          bittorio[row][col].play();
-        }
-      }
-
-      console.log("calculating the value of the future");
-      //compute the new future after pushing up
-      for(col=0; col < colLength; col++){
-        bittorio[rowLength -1][col].state = 2;
-        bittorio[rowLength -1][col].userChange = 0;
-      }
-
-      caupdate.changeFuture(bittorio, rowLength - 1);
-      timer++;
-    }
-    
     /// ------------ Events on buttons ---------------------------
     
-    document.getElementById('bittorio').onclick = function(){
-      //console.log("Second")
-      rowChange(now);
-    }
-    
-    document.getElementById('bittorio').onmouseover = function(){
-      if( utils.getVal("enablePerturb") == 0){
-        rowChange(now);
-      }
-      
-    }
-
     document.onkeypress = function(evt){
+
+      console.log(evt)
       var code = evt.which || evt.keyCode;
-      console.log("key is down" + evt.keyCode)
+
+      var keyMap = [97,115,100,102,103,104,106,107,108,59,39,46,47];
+      var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
       
-      if( code == 97){
-        bittorio[now+1][0].updateFn();
+      if( code == 114){
+        utils.clear(bittorio);
+        document.getElementById("transcription").value += ",|,";
       }
-      if( code == 115){
-        bittorio[now+1][1].updateFn();
+      else if( code == 99){
+        utils.clearTranscription();
       }
-      if( code == 100){
-        bittorio[now+1][2].updateFn();
-      }
+      else if( keyMap.indexOf(code) != -1) {
+        
+        var findKey = function (code){
+          return parseInt(
+            keyMap.map( function (val, ind, arr) { if (val == code) { console.log(ind); return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
+          );
+        }
 
-      if( code == 102){
-        bittorio[now+1][3].updateFn();
-      }
+        var findNote = function(note){
+          return parseInt(
+            noteMap.map( function (val, ind, arr) { if (val == note) { console.log(ind); return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
+          );
+        }
+        
+        var str = document.getElementById("transcription").value;
+        str = str.split(",");
+        var oldInd = str[str.length-1];
+        console.log("old ind ias" + oldInd)
+        
+        if ( oldInd == ""){
+          //first time
+        }
+        else{
+          console.log("hi" + oldInd);
+          bittorio[findNote(oldInd)].updateFn(); //close the previous playing note
+        }
+        
+        var index = findKey(code);
 
-      if( code == 103){
-        bittorio[now+1][4].updateFn();
-      }
-      if( code == 104){
-        bittorio[now+1][5].updateFn();
-      }
+        bittorio[index].userChange = 1;
+        bittorio[index].updateFn();
 
-      if( code == 106){
-        bittorio[now+1][6].updateFn();
-      }
-      
-      if( code == 107){
-        bittorio[now+1][7].updateFn();
-      }
-
-      if( code == 108){
-        bittorio[now+1][8].updateFn();
-      }
-
-      if( code == 59){
-        bittorio[now+1][9].updateFn();
-      }
-
-      if( code == 39){
-        bittorio[now+1][10].updateFn();
-      }
-
-      if( code == 13){
-        bittorio[now+1][11].updateFn();
-      }
-      
-      rowChange(now+1);
-    }
-    
-    document.getElementById('preset').onchange = function(){
-
-      var val = document.getElementById('preset').value;
-      //console.log(val);
-      if(val == "None"){
-        //
+        if (oldInd == ""){
+          document.getElementById("transcription").value += noteMap[index];
+        }
+        else if (oldInd == "|"){
+          
+        }
+        else if( bittorio[index].state == 1 ){
+          document.getElementById("transcription").value += "," + noteMap[index];
+        }
+        
+        if (timer == -1){
+          timer = evt.timeStamp;
+          document.getElementById("time").value += 0;
+        }
+        else{
+          if(bittorio[index].state == 1){
+            document.getElementById("time").value += "," + (evt.timeStamp - timer)/1000;
+          }
+        }
+        
       }
       else{
-        loadConfig(val,"gridRowLength","gridColLength");
-        rowChange(now);
+        console.log("no change")
       }
-
-    }
-    
-    document.getElementById('gridColLength').onchange = function(){
-      colLength = utils.getVal('gridColLength'); 
-      var svg = document.getElementById('bittorio');
-      while (svg.firstChild) {svg.removeChild(svg.firstChild);}
-
-      //console.log("paper width after is" + paper.width);
-      //bittorio = grid(id, paper, rowLength,colLength,objSize);
-      bittorio = squareGrid("bittorio", rowLength,colLength);
-
-      //utils.updateChange (bittorio, rowLength, colLength);
-      utils.reset(bittorio,rowLength, colLength,now)
-      utils.init(bittorio,colLength,now);
-      drawNowLine(rowLength, colLength);
+      
     }
         
-
-    document.getElementById('gridRowLength').onchange = function(){
-      console.log("original now is" + "row" + rowLength + "now" + now);
-      rowLength = utils.getVal('gridRowLength'); 
-      var svg = document.getElementById('bittorio');
-      while (svg.firstChild) {svg.removeChild(svg.firstChild);}
-
-      //console.log("paper heigth after is" + paper.height);
-      now = Math.floor(rowLength / 2);
-      console.log("original now is" + "row" + rowLength + "now" + now);
-      bittorio = squareGrid("bittorio", rowLength,colLength);
-      //utils.updateChange (bittorio, rowLength, colLength);
-      utils.reset(bittorio,rowLength, colLength,now)
-      utils.init(bittorio,colLength,now);
-      drawNowLine(rowLength, colLength);
+    document.getElementById('clear').onclick = function(){
+      utils.clear(bittorio);
     }
 
-    document.getElementById('randomConfig').onclick = function(){
-      utils.randomInit(bittorio, colLength,now);
-      rowChange(now);
+    document.getElementById('clearT').onclick = function(){
+      utils.clearTranscription();
     }
     
-    document.getElementById('clear').onclick = function(){
-      utils.clear(bittorio, colLength, now);
-      rowChange(now);
-    }
+    // document.getElementById('start').addEventListener("click", function(){
+    //   //console.log("here after reset");
+    //   rowChange(now);
+    //   if(run == null){
+    //     run = setInterval(simulate , parseFloat(document.getElementById("loopTime").value)); // start setInterval as "run";
+    //   }
+    // },true);
 
-   
-    document.getElementById('carulebinary').onchange = function(){
-      //convert to decimal
-      var num = document.getElementById('carulebinary').value;
-      num = num.split("").map(function(n){ return parseInt(n);});
-      var dec = utils.convert2Decimal (num);
-      //console.log("here");
-      document.getElementById('carule').value = dec;
-      rowChange(now);
+    // document.getElementById('gain').onchange = function(){
+    //   utils.setGain(bittorio[now], utils.getVal("gain"));
+    // }
 
-    };
-
-    document.getElementById('carule').onchange = function (){
-      var num = parseInt(document.getElementById('carule').value);
-      var str = utils.convert2Binary (num, 8);
-      document.getElementById('carulebinary').value = str;
-      rowChange(now);
-    };
-
-    document.getElementById('step').addEventListener("click", function(){
-      rowChange(now);
-      caScroll();
-
-    });
-
+    
     
     /// ------------ Timers -------------------------------
 
     //current timer - or the now row
     var run = null;
-
-    document.getElementById('start').addEventListener("click", function(){
-      //console.log("here after reset");
-      rowChange(now);
-      if(run == null){
-        run = setInterval(simulate , parseFloat(document.getElementById("loopTime").value)); // start setInterval as "run";
-      }
-    },true);
-
-    document.getElementById('gain').onchange = function(){
-      utils.setGain(bittorio[now], utils.getVal("gain"));
-    }
     
-    document.getElementById('stop').addEventListener("click", function(){
-      if(run != null){
-        clearInterval(run); // stop the setInterval()
-        //utils.stopAllSounds(bittorio[now]);
-        run = null;
-      }
-      //also unconditionally stop playing everything
-      utils.stopAllSounds(bittorio[now]);
-    },true);
-
-    document.getElementById('reset').addEventListener("click", function(){
-      if(run != null){
-        clearInterval(run); // stop the setInterval()
-      }
-
-      run = null;
-      utils.reset(bittorio, rowLength, colLength, now);
-      stepCount = 0;
-      console.log("utilNum is" + initNum);
-
-      //var str = utils.convert2Binary (initNum, colLength);
-      //str = str.split(""); //has to be an array
-      //console.log("str is" + str);
-      
-      utils.setConfig(0,bittorio,colLength, now);
-      
-
-      timer = 0;
-    },true);
-
-
-    function simulate() {
-      
-      clearInterval(run); // stop the setInterval()
-      // evolve the next state of the CA
-      caScroll();
-      //run at the same or another speed
-      run = setInterval(simulate, parseFloat(document.getElementById("loopTime").value)); // start the setInterval()
-
-    }
-    
-
   });

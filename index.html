@@ -14,7 +14,7 @@
   </head>
 
   <body bg-color="#000000">
-    <header> Enactive musical cellular automata </header>
+    <header> Reflexive turn taking system </header>
     
     <div id="main">
       
@@ -22,7 +22,7 @@
         <svg id="bittorio" width="100%" height="500px">
         </svg>
       </centerDiv> 
-
+      
       <instruction>
         <!-- <svg id="toneMatrix" width="100%" height="450px"> -- -->
         <!-- </svg> -->
@@ -31,53 +31,33 @@
       </instruction>
       
       <controls>
-
+        
         <b> Controls: </b> <br>
-        <!-- Click the initial configuration <input type="button" id="setInitConfig" value="fix!"> </input> <br> -->
-        Rate(in ms) <input type="text" id="loopTime" value="200">  </input>
-
-        <input type="button" id="step" value="step">  </input>
-        <input type="button" id="start" value="Start">  </input>
-        <input type="button" id="stop" value="stop">  </input>
-        <input type="button" id="reset" value="Reset">  </input>
-        <input type="button" id="clear" value="Clear">  </input>
-        <br>
-
-        RowLength <input type="text" id="gridRowLength"
-                         value="15"> </input> <br>
-        ColLength <input type="text" id="gridColLength"
-                         value="15"> </input> <br>
-        Gain <input type="text" id="gain"
-                         value="0.25"> </input> <br>
 
         
-        <input type="button" id="randomConfig" value="randomize">  </input> <br>
-
+        <input type="button" id="start" value="Start"> </input>
+        <!-- <input type="button" id="stop" value="stop">  </input> -->
+        <!-- <input type="button" id="reset" value="Reset">  </input> -->
+        <br>
+        <input type="button" id="clear" value="Clear cells"> </input> <br>
+        <input type="button" id="clearT" value="Clear Transcription">  </input>
         
-        <h3> Perturbations </h3> 
-        Enable user perturbations <input type="text"
-        id="enablePerturb" value="1/0"> </input> <br>        
-        Perturbation color <input type="text" id="perturbationColor" value="1"> </input>
         <br>
 
-        <b> CA rules </b> <br>
+        Gain <input type="text" id="gain" value="0.25"> </input> <br>
 
-        CA Rule Binary <input type="text" id="carulebinary" value="00000000"> <br> <br>
-        CA Rule decimal (0-255) <input type="text" id="carule" value="0"> <br>
-        <b> Preset rules </b>
+        <b> Preset AIs </b>
 
         <select id="preset">
           <option value="None"> ---- </option>
-          <option value="oddSequence"> Odd sequence recognizer(Rule 132) </option>
-          <option value="doublePerturb"> Double perturbations recognizer(Rule 133) </option>
-          <option value="Rule204"> Imitation </option>
-          <option value="Rule160"> Varela Rule 00010001 </option>
-          <option value="Rule73"> Varela Rule 01101000 </option>
-          <option value="Rule146"> Varela Rule 000010110 </option>
-          <option value="Rule164"> Varela Rule 10010001 </option>
-          <option value="Rule123"> Varela Rule 01101111 </option>
-          <option value="Rule150"> Varela Rule 10010110 </option>
         </select>
+        <br>
+        <h3> Transcription <h3>
+        <textarea id="transcription" rows="10" cols="20">
+        </textarea>
+        <h3> Time <h3>
+        <textarea id="time" rows="10" cols="20">
+        </textarea>
         
       </controls>
     </div>

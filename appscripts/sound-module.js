@@ -17,10 +17,9 @@ define(
 
       var basicOsc = basicOscFactory();
 
-      var maxNotes = utils.getVal('gridRowLength');
       basicOsc.setParam("play", 0);    //or// basicOsc.setParamNorm("play", 0.000);
       
-      basicOsc.setParam("Frequency", 220*Math.pow(2, (notenum-maxNotes)/12));    //or// basicOsc.setParamNorm("Frequency", 0.199);
+      basicOsc.setParam("Frequency", 220*Math.pow(2, notenum/12));    //or// basicOsc.setParamNorm("Frequency", 0.199);
       basicOsc.setParam("Type", 1);    //or// basicOsc.setParamNorm("Type", 0.250);
       basicOsc.setParam("Gain", 0.125);    //or// basicOsc.setParamNorm("Gain", 0.200);
       basicOsc.setParam("Attack Time", 0.05);    //or// basicOsc.setParamNorm("Attack Time", 0.010);
