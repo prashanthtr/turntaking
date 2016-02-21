@@ -68,6 +68,7 @@ require(
       if( code == 114){
         utils.clear(bittorio);
         document.getElementById("transcription").value += ",|,";
+        document.getElementById("time").value += "," + (evt.timeStamp-timer)/1000 + ",";
       }
       else if( code == 99){
         utils.clearTranscription();
@@ -89,13 +90,13 @@ require(
         var str = document.getElementById("transcription").value;
         str = str.split(",");
         var oldInd = str[str.length-1];
-        console.log("old ind ias" + oldInd)
+        console.log("old ind is" + oldInd)
         
         if ( oldInd == ""){
           //first time
         }
         else{
-          console.log("hi" + oldInd);
+          //console.log("hi" + oldInd);
           bittorio[findNote(oldInd)].updateFn(); //close the previous playing note
         }
         
@@ -151,7 +152,77 @@ require(
     //   utils.setGain(bittorio[now], utils.getVal("gain"));
     // }
 
-    
+
+    // --------- system response ------------------
+    // system reads from the transcription and randomly plays the last
+    // few notes from the transcription
+
+    document.getElementById("start").onclick = function(){
+
+      console.log("entering")
+      //generates a response
+      var transcription = document.getElementById("transcription").value.split(",")
+      var timing = document.getElementById("time").value.split(",");
+      var len = transcription.length;
+      iter = len-1;
+
+      console.log(transcription)
+      
+      for( iter = len - 3; iter > 0; iter--){
+        if( transcription[iter] == "|") {
+          break;
+         }
+        else{
+        }
+      }
+
+      console.log("iter is" + iter);
+      
+      var lastPhrase = len - 2 - iter;
+      var number = 1 + Math.floor(0.75 + Math.random() * lastPhrase); //some portion of the last phrase
+
+      console.log("number is" + number)
+      var responseIter = len - 2 - number;
+      var responseNotes =  [], schedule = [];
+      for ( j=0, i = responseIter; i <= len-1; i++){
+        if( transcription[i] == "|" ){
+          // nothing
+          responseNotes[j] = "#"; //stop sign
+          schedule[j] = timing[i]; 
+          break;
+        }
+        else{
+          responseNotes[j] = transcription[i];
+          schedule[j] = timing[i]; 
+          j++;
+        }
+      }
+      var st = schedule[0];
+      schedule = schedule.map( function (el) {return el-st;});
+
+      var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
+
+      var findNote = function(note){
+        return parseInt(
+          noteMap.map( function (val, ind, arr) { if (val == note) { console.log(ind); return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
+        );
+      }
+
+      //schedule sounds
+      for ( i = 0; i < responseNotes.length-1; i++){
+
+        var note = findNote(responseNotes[i]);
+
+        console.log(note)
+        setTimeout( function(){bittorio[note].tone.play();}, schedule[i]*1000);
+        setTimeout(function(){bittorio[note].tone.release();},schedule[i+1]*1000);
+      }
+      
+      //scheduleEvents( responseNotes, schedule);
+      
+      console.log(responseNotes);
+      console.log(schedule);
+    }
     
     /// ------------ Timers -------------------------------
 
