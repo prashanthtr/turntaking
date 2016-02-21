@@ -16,7 +16,7 @@ define(
     return function (notenum){
 
       var basicOsc = basicOscFactory();
-
+      
       basicOsc.setParam("play", 0);    //or// basicOsc.setParamNorm("play", 0.000);
       
       basicOsc.setParam("Frequency", 220*Math.pow(2, notenum/12));    //or// basicOsc.setParamNorm("Frequency", 0.199);

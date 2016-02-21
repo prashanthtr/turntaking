@@ -1,6 +1,6 @@
 require(
-  ["squareGrid","utils"],
-  function (squareGrid,utils) {
+  ["squareGrid","utils","sound-module"],
+  function (squareGrid,utils,basicOsc) {
 
     // --------------- Inits ------------------------------
     
@@ -68,7 +68,8 @@ require(
       if( code == 114){
         utils.clear(bittorio);
         document.getElementById("transcription").value += ",|,";
-        document.getElementById("time").value += "," + (evt.timeStamp-timer)/1000 + ",";
+        document.getElementById("time").value += "," + (evt.timeStamp-timer) + ",";
+        timer = -1;
       }
       else if( code == 99){
         utils.clearTranscription();
@@ -121,7 +122,7 @@ require(
         }
         else{
           if(bittorio[index].state == 1){
-            document.getElementById("time").value += "," + (evt.timeStamp - timer)/1000;
+            document.getElementById("time").value += "," + (evt.timeStamp - timer);
           }
         }
         
@@ -161,14 +162,20 @@ require(
 
       console.log("entering")
       //generates a response
-      var transcription = document.getElementById("transcription").value.split(",")
-      var timing = document.getElementById("time").value.split(",");
-      var len = transcription.length;
-      iter = len-1;
+      var transcription = document.getElementById("transcription").value;
+      transcription = transcription.substr(0, transcription.length-1);
+      transcription = transcription.split(",");
 
-      console.log(transcription)
+      var timing = document.getElementById("time").value;
+      timing = timing.substr(0, timing.length-1);
+      timing = timing.split(",");
+
+      var len = transcription.length;
+
+      console.log("transcrition is" + transcription)
+      console.log("timing is " + timing)
       
-      for( iter = len - 3; iter > 0; iter--){
+      for( iter = len - 2; iter >= 0; iter--){
         if( transcription[iter] == "|") {
           break;
          }
@@ -178,13 +185,13 @@ require(
 
       console.log("iter is" + iter);
       
-      var lastPhrase = len - 2 - iter;
-      var number = 1 + Math.floor(0.75 + Math.random() * lastPhrase); //some portion of the last phrase
-
-      console.log("number is" + number)
-      var responseIter = len - 2 - number;
+      //var lastPhrase = len - iter -3;
+      //var number = 1 + Math.floor(0.75 + Math.random() * lastPhrase); //some portion of the last phrase
+      
+      //console.log("number is" + number)
+      //var responseIter = len - 2 - number;
       var responseNotes =  [], schedule = [];
-      for ( j=0, i = responseIter; i <= len-1; i++){
+      for ( j=0, i = iter+1; i < len; i++){
         if( transcription[i] == "|" ){
           // nothing
           responseNotes[j] = "#"; //stop sign
@@ -198,6 +205,7 @@ require(
         }
       }
       var st = schedule[0];
+      console.log(schedule)
       schedule = schedule.map( function (el) {return el-st;});
 
       var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
@@ -207,16 +215,30 @@ require(
           noteMap.map( function (val, ind, arr) { if (val == note) { console.log(ind); return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
         );
       }
-
+      
+      responseNotes = responseNotes.map( findNote )
+      responseNotes.map( function (el, i, arr){
+        if( el!=0 && !el ){
+          //nothing
+        }
+        else {
+          var osc = basicOsc(el);
+          console.log("ele" + el)
+          setTimeout( function(){osc.play();}, schedule[i]);
+          setTimeout(function(){osc.release();},schedule[i+1]);
+        }
+      });
+      
       //schedule sounds
-      for ( i = 0; i < responseNotes.length-1; i++){
+      // for ( i = 0; i < responseNotes.length-1; i++){
 
-        var note = findNote(responseNotes[i]);
-
-        console.log(note)
-        setTimeout( function(){bittorio[note].tone.play();}, schedule[i]*1000);
-        setTimeout(function(){bittorio[note].tone.release();},schedule[i+1]*1000);
-      }
+      //   var note = findNote(responseNotes[i]);
+      //   console.log(note)
+      //   var pl = function(){bittorio[note].tone.play();}
+      //   var rel = function(){bittorio[note].tone.release();}
+      //   setTimeout( pl, schedule[i]);
+      //   setTimeout( rel,schedule[i+1]);
+      // }
       
       //scheduleEvents( responseNotes, schedule);
       
