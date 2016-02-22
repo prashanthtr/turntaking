@@ -43,12 +43,45 @@ define(
       // timestep.
       // for each note, an output CA sequence is calculated.
       // current state of the CA is in some fixed point?
-      
+
+      // //converts to binary of suitable,length
+      function convert2Binary (num, len){
+
+        var str = "";
+        var rem = 0;
+
+        while( num > 1 ){
+          rem = num % 2;
+          str += rem;
+          num = parseInt(num/2);
+        }
+        if( num == 0){
+          str+=0;
+        }
+        else str+=1;
+
+        var i = str.length;
+        while( i < len ){
+          str+=0;
+          i++;
+        }
+
+        str = str.split("").reverse().join(",");
+        return str;
+      }
+
 
       function applyRule (state){
-        var rule = [0,0,1,0,0,0,0,1] ; //wolframs CA rules
-        var ruleInd = ["000","001","010","011","100","101","110","111"];
 
+        //00101101
+        //var rule = [0,0,1,0,1,1,0,1] ;
+        //var rule = [0,0,0,1,1,1,1,0] ; //wolframs CA rules
+        
+        decRule = parseInt(document.getElementById("rule").value);
+        var rule = convert2Binary(decRule,8).split(",").map(function(el) {return parseInt(el);} );
+        
+        var ruleInd = ["111","110","101","100","011","010","001","000"];
+        
         return parseInt(ruleInd.map(function(el,ind,arr){
           if(state == el){
             return rule[ind];
