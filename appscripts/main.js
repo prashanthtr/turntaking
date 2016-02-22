@@ -1,6 +1,6 @@
 require(
-  ["squareGrid","utils","sound-module"],
-  function (squareGrid,utils,basicOsc) {
+  ["squareGrid","utils","sound-module","caAgent"],
+  function (squareGrid,utils,basicOsc,caAgent) {
 
     // --------------- Inits ------------------------------
     
@@ -72,6 +72,7 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
         document.getElementById("transcription").value += ",|,";
         document.getElementById("time").value += "," + (evt.timeStamp-timer) + ",";
         timer = -1;
+        playResponse();
       }
       else if( code == 99){
         utils.clearTranscription();
@@ -159,8 +160,8 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
     // --------- system response ------------------
     // system reads from the transcription and randomly plays the last
     // few notes from the transcription
-
-    document.getElementById("start").onclick = function(){
+    
+    function playResponse (){
 
       console.log("entering")
       //generates a response
@@ -180,7 +181,7 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
       for( iter = len - 2; iter >= 0; iter--){
         if( transcription[iter] == "|") {
           break;
-         }
+        }
         else{
         }
       }
@@ -219,17 +220,42 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
       }
       
       responseNotes = responseNotes.map( findNote )
-      responseNotes.map( function (el, i, arr){
+
+      var agentResponse = caAgent(responseNotes);
+      // response from Ca is howeveer, a string of notes.
+      
+      agentResponse.map ( function(el,i,arr){
         if( el!=0 && !el ){
           //nothing
         }
-        else {
-          var osc = basicOsc(el);
-          console.log("ele" + el)
-          setTimeout( function(){osc.play();}, schedule[i]);
-          setTimeout(function(){osc.release();},schedule[i+1]);
+        else{
+            //el contains more than 1 element
+          el.map(function(el2,ind,arr){
+            if(!el2){
+              // do nothing
+            }
+            else{
+              var osc = basicOsc(ind);
+              console.log("ele2" + ind + "schedule" + schedule[i] + " " + schedule[i+1]);
+              setTimeout( function(){osc.play();}, schedule[i]);
+              setTimeout(function(){console.log("closing");  osc.release();},schedule[i+1]);
+            }
+          });
         }
       });
+      
+      
+      // responseNotes.map( function (el, i, arr){
+      //   if( el!=0 && !el ){
+      //     //nothing
+      //   }
+      //   else {
+      //     var osc = basicOsc(el);
+      //     console.log("ele" + el)
+      //     setTimeout( function(){osc.play();}, schedule[i]);
+      //     setTimeout(function(){osc.release();},schedule[i+1]);
+      //   }
+      // });
       
       //schedule sounds
       // for ( i = 0; i < responseNotes.length-1; i++){
@@ -244,9 +270,11 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
       
       //scheduleEvents( responseNotes, schedule);
       
-      console.log(responseNotes);
+      //console.log(responseNotes);
       console.log(schedule);
+      
     }
+    
     
     /// ------------ Timers -------------------------------
 
