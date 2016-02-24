@@ -166,17 +166,33 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
       console.log("entering")
       //generates a response
 
-      var transcription = utils.parseTextBox("transcription");
+      
+      var user = utils.parseTextBox("transcription");
+      var system = utils.parseTextBox("output");
       var timing = utils.parseTextBox("time");
+
+      
+      var transcription = [];
+      for(var i = 0,k=0; i < system.length; i++) {
+        transcription[k] = user[i];
+        k++;
+        if( system.length ){
+          transcription[k] = system[i];
+          k++;
+        }
+      }
+      transcription[k] = user[user.length-1];
       
       var len = transcription.length;
 
+      console.log(transcription);
+      
       var responseNotes =  transcription[transcription.length-1],
           schedule = timing[timing.length-1];
       
       //console.log("number is" + number)
       
-      console.log(responseNotes);
+      console.log("response is" + responseNotes);
       console.log(schedule);
       
       var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
@@ -186,13 +202,12 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
           noteMap.map( function (val, ind, arr) { if (val == note) { console.log(ind); return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
         );
       }
-
+      
       var inputNote = responseNotes[0];
       //var agentResponse = markovAgent(transcription,inputNote);
       var agentResponse = analogy(transcription);
       
-      
-      document.getElementById("output").value += agentResponse.reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
+      document.getElementById("output").value += agentResponse.map(function(el){return noteMap[el];}).reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
       
       //var agentResponse = caAgent(responseNotes);
       // response from Ca is howeveer, a string of notes.

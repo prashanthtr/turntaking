@@ -10,7 +10,7 @@ define(
       
       //parses text box and neatly produces each phrase in an array
       function parseTextBox(id){
-
+        
         var textBox = document.getElementById(id).value;
         var textBox = textBox.substr(0, textBox.length-1)
         //because the last is always an empty string
