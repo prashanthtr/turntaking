@@ -1,6 +1,6 @@
 require(
-  ["squareGrid","utils","sound-module","caAgent"],
-  function (squareGrid,utils,basicOsc,caAgent) {
+  ["squareGrid","utils","sound-module","caAgent","markovAgent","analogy"],
+  function (squareGrid,utils,basicOsc,caAgent,markovAgent,analogy) {
 
     // --------------- Inits ------------------------------
     
@@ -70,7 +70,7 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
       if( code == 114){
         utils.clear(bittorio);
         document.getElementById("transcription").value += ",|,";
-        document.getElementById("time").value += "," + (evt.timeStamp-timer) + ",";
+        document.getElementById("time").value += "," + (evt.timeStamp-timer) + ",|,"; //extra space
         timer = -1;
         playResponse();
       }
@@ -165,52 +165,20 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
 
       console.log("entering")
       //generates a response
-      var transcription = document.getElementById("transcription").value;
-      transcription = transcription.substr(0, transcription.length-1);
-      transcription = transcription.split(",");
 
-      var timing = document.getElementById("time").value;
-      timing = timing.substr(0, timing.length-1);
-      timing = timing.split(",");
-
+      var transcription = utils.parseTextBox("transcription");
+      var timing = utils.parseTextBox("time");
+      
       var len = transcription.length;
 
-      console.log("transcrition is" + transcription)
-      console.log("timing is " + timing)
-      
-      for( iter = len - 2; iter >= 0; iter--){
-        if( transcription[iter] == "|") {
-          break;
-        }
-        else{
-        }
-      }
-
-      console.log("iter is" + iter);
-      
-      //var lastPhrase = len - iter -3;
-      //var number = 1 + Math.floor(0.75 + Math.random() * lastPhrase); //some portion of the last phrase
+      var responseNotes =  transcription[transcription.length-1],
+          schedule = timing[timing.length-1];
       
       //console.log("number is" + number)
-      //var responseIter = len - 2 - number;
-      var responseNotes =  [], schedule = [];
-      for ( j=0, i = iter+1; i < len; i++){
-        if( transcription[i] == "|" ){
-          // nothing
-          responseNotes[j] = "#"; //stop sign
-          schedule[j] = timing[i]; 
-          break;
-        }
-        else{
-          responseNotes[j] = transcription[i];
-          schedule[j] = timing[i]; 
-          j++;
-        }
-      }
-      var st = schedule[0];
-      console.log(schedule)
-      schedule = schedule.map( function (el) {return el-st;});
-
+      
+      console.log(responseNotes);
+      console.log(schedule);
+      
       var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
 
       var findNote = function(note){
@@ -218,60 +186,49 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
           noteMap.map( function (val, ind, arr) { if (val == note) { console.log(ind); return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
         );
       }
-      
-      responseNotes = responseNotes.map( findNote )
 
-      var agentResponse = caAgent(responseNotes);
+      var inputNote = responseNotes[0];
+      //var agentResponse = markovAgent(transcription,inputNote);
+      var agentResponse = analogy(transcription);
+      
+      
+      document.getElementById("output").value += agentResponse.reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
+      
+      //var agentResponse = caAgent(responseNotes);
       // response from Ca is howeveer, a string of notes.
       
-      agentResponse.map ( function(el,i,arr){
-        if( el!=0 && !el ){
-          //nothing
-        }
-        else{
-            //el contains more than 1 element
-          el.map(function(el2,ind,arr){
-            if(!el2){
-              // do nothing
-            }
-            else{
-              var osc = basicOsc(ind);
-              console.log("ele2" + ind + "schedule" + schedule[i] + " " + schedule[i+1]);
-              setTimeout( function(){osc.play();}, schedule[i]);
-              setTimeout(function(){console.log("closing");  osc.release();},schedule[i+1]);
-            }
-          });
-        }
-      });
-      
-      
-      // responseNotes.map( function (el, i, arr){
+      // agentResponse.map ( function(el,i,arr){
       //   if( el!=0 && !el ){
       //     //nothing
       //   }
-      //   else {
-      //     var osc = basicOsc(el);
-      //     console.log("ele" + el)
-      //     setTimeout( function(){osc.play();}, schedule[i]);
-      //     setTimeout(function(){osc.release();},schedule[i+1]);
+      //   else{
+      //       //el contains more than 1 element
+      //     el.map(function(el2,ind,arr){
+      //       if(!el2){
+      //         // do nothing
+      //       }
+      //       else{
+      //         var osc = basicOsc(ind);
+      //         console.log("ele2" + ind + "schedule" + schedule[i] + " " + schedule[i+1]);
+      //         setTimeout( function(){osc.play();}, schedule[i]);
+      //         setTimeout(function(){console.log("closing");  osc.release();},schedule[i+1]);
+      //       }
+      //     });
       //   }
       // });
       
-      //schedule sounds
-      // for ( i = 0; i < responseNotes.length-1; i++){
-
-      //   var note = findNote(responseNotes[i]);
-      //   console.log(note)
-      //   var pl = function(){bittorio[note].tone.play();}
-      //   var rel = function(){bittorio[note].tone.release();}
-      //   setTimeout( pl, schedule[i]);
-      //   setTimeout( rel,schedule[i+1]);
-      // }
-      
-      //scheduleEvents( responseNotes, schedule);
-      
-      //console.log(responseNotes);
-      console.log(schedule);
+      agentResponse.map( function (el, i, arr){
+        if( el!=0 && !el ){
+          //nothing
+        }
+        else {
+          //var noteNum = findNote(el);
+          var osc = basicOsc(el);
+          console.log("ele" + el)
+          setTimeout( function(){osc.play();}, schedule[i]);
+          setTimeout(function(){osc.release();},schedule[i+1]);
+        }
+      });
       
     }
     

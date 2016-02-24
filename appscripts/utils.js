@@ -1,6 +1,37 @@
 define(
     [],
     function(){
+
+      function prettyPrint (arr){
+        arr.map(function(el){
+          console.log(el);
+        });
+      }
+      
+      //parses text box and neatly produces each phrase in an array
+      function parseTextBox(id){
+
+        var textBox = document.getElementById(id).value;
+        var textBox = textBox.substr(0, textBox.length-1)
+        //because the last is always an empty string
+        textBoxArr = textBox.split("|");
+        textBox2d = textBoxArr.map( function(el) {return el.split(",");})
+        var phrases = [];
+        
+        for(var i = 0; i < textBox2d.length; i++) {
+          phrases[i] = [];
+          for(var j = 0, k=0; j < textBox2d[i].length; j++) {
+            if( textBox2d[i][j] == ""){
+              
+            }
+            else{
+              phrases[i][k] = textBox2d[i][j];
+              k++;
+            }
+          }
+        }
+        return phrases.slice(0,phrases.length-1); //returns the prhases from the trasncription
+      }
       
       //   var initState = [];
 
@@ -121,6 +152,7 @@ define(
         
         document.getElementById('transcription').value = "";
         document.getElementById('time').value = "";
+        document.getElementById('output').value = "";
                 
       }
 
@@ -176,6 +208,8 @@ define(
       // //exports.updateChange = updateChange;
       // //exports.setNthBit = setNthBit;
       exports.clearTranscription = clearTranscription;
+      exports.parseTextBox = parseTextBox;
+      exports.prettyPrint = prettyPrint;
       return exports;
 
     });

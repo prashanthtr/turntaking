@@ -19,8 +19,24 @@
     <div id="main">
       
       <centerDiv>
-        <svg id="bittorio" width="100%" height="500px">
+
+        <h3> Transcription </h3>
+        &nbsp &nbsp
+        <textarea id="transcription" rows="5" cols="85">
+        </textarea>
+       
+        <h3> Time </h3>
+         &nbsp &nbsp
+        <textarea id="time" rows="5" cols="85">
+        </textarea>
+        
+        <svg id="bittorio" width="100%" height="100px">
         </svg>
+        <br>
+        &nbsp &nbsp
+        <textarea id="output" rows="7" cols="85">
+        </textarea>
+        
       </centerDiv> 
       
       <instruction>
@@ -43,7 +59,6 @@
         <input type="button" id="clearT" value="Clear Transcription">  </input>
         
         <br>
-
         Gain <input type="text" id="gain" value="0.25"> </input> <br>
         CA Rule <input type="text" id="rule" value="0"> </input> <br>
         
@@ -53,12 +68,6 @@
           <option value="None"> ---- </option>
         </select>
         <br>
-        <h3> Transcription <h3>
-        <textarea id="transcription" rows="10" cols="20">
-        </textarea>
-        <h3> Time <h3>
-        <textarea id="time" rows="10" cols="20">
-        </textarea>
         
       </controls>
     </div>
