@@ -93,7 +93,7 @@ define(
         }
         else{
           console.log("phrase 4");
-          document.getElementById("phase").value = 3;
+          document.getElementById("phase").value = 4;
           var rs = inputSeq[inputSeq.length-1].map(findNote)[0];
           if(rs-4 < 0){
             rs = (12 + rs - 4)% 13; //turn around
