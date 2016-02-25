@@ -71,7 +71,7 @@ define(
         if( abstLast.join("") == seqMatch ){
           if( inputSeq.length == 1 ){
             console.log("phrase 1")
-            document.getElementById("phase").value = 1;
+            document.getElementById("phase").value = 2;
           
             output = lastPhrase.map(findNote).map(function(el) {return el+2;});
           }// A mode, tranpose by 1
@@ -79,12 +79,12 @@ define(
             var secondLast = inputSeq[inputSeq.length-2];
             if( lastPhrase[0] - secondLast[0] == 2){ //second mode only tone increase
               console.log("phrase 2");
-              document.getElementById("phase").value = 2;
+              document.getElementById("phase").value = 3;
           
               output = lastPhrase.map(findNote).map(function(el,ind,arr) {return el+ind*2;}); //increase every note by its position
             }
             else{ //still A mode only
-              console.log("phrase 1");
+              console.log("phrase 2");
               document.getElementById("phase").value = 1;
           
               output = lastPhrase.map(findNote).map(function(el) {return el+2;});
@@ -92,7 +92,7 @@ define(
           }
         }
         else{
-          console.log("phrase 3");
+          console.log("phrase 4");
           document.getElementById("phase").value = 3;
           var rs = inputSeq[inputSeq.length-1].map(findNote)[0];
           if(rs-4 < 0){
