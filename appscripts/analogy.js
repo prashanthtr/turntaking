@@ -85,7 +85,7 @@ define(
             }
             else{ //still A mode only
               console.log("phrase 2");
-              document.getElementById("phase").value = 1;
+              document.getElementById("phase").value = 2;
           
               output = lastPhrase.map(findNote).map(function(el) {return el+2;});
             }
