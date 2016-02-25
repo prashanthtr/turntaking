@@ -60,7 +60,7 @@ define(
       // [   C C# D D#]
       // [C           ]
       // right now, it is trained only on note sequences
-
+      
       var markovChain = [];
 
       for(var i = 0; i < 13; i++) {

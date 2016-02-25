@@ -14,27 +14,40 @@
   </head>
 
   <body bg-color="#000000">
-    <header> Reflexive turn taking system </header>
+    <header> Musical Eliza: plays AA(t)BA sequences </header>
     
     <div id="main">
       
       <centerDiv>
 
-        <h3> Transcription </h3>
+        User  <br>
         &nbsp &nbsp
         <textarea id="transcription" rows="5" cols="85">
         </textarea>
-       
-        <h3> Time </h3>
-         &nbsp &nbsp
-        <textarea id="time" rows="5" cols="85">
+
+        <br> System  <br>
+        &nbsp &nbsp
+        <textarea id="output" rows="5" cols="85">
         </textarea>
-        
+
         <svg id="bittorio" width="100%" height="100px">
         </svg>
         <br>
+
+        <center>
+        System responded with phrase <input type="text" id="phase"
+                                            value = "1" size="1pt"> </input> in
+                                            AA'BA
+        </center>
+        
+        <br>
+        Combined score <br>
         &nbsp &nbsp
-        <textarea id="output" rows="7" cols="85">
+        <textarea id="combined" rows="4" cols="85">
+        </textarea>
+        <br> Time  <br>
+        &nbsp &nbsp
+        <textarea id="time" rows="4" cols="85">
         </textarea>
         
       </centerDiv> 

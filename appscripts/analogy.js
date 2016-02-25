@@ -71,24 +71,39 @@ define(
         if( abstLast.join("") == seqMatch ){
           if( inputSeq.length == 1 ){
             console.log("phrase 1")
+            document.getElementById("phase").value = 1;
+          
             output = lastPhrase.map(findNote).map(function(el) {return el+2;});
           }// A mode, tranpose by 1
           else {
             var secondLast = inputSeq[inputSeq.length-2];
             if( lastPhrase[0] - secondLast[0] == 2){ //second mode only tone increase
               console.log("phrase 2");
+              document.getElementById("phase").value = 2;
+          
               output = lastPhrase.map(findNote).map(function(el,ind,arr) {return el+ind*2;}); //increase every note by its position
             }
             else{ //still A mode only
               console.log("phrase 1");
+              document.getElementById("phase").value = 1;
+          
               output = lastPhrase.map(findNote).map(function(el) {return el+2;});
             }
           }
         }
         else{
           console.log("phrase 3");
-          output = inputSeq[inputSeq.length-3].map(findNote);
-        }//in C, to resolution which is A
+          document.getElementById("phase").value = 3;
+          var rs = inputSeq[inputSeq.length-1].map(findNote)[0];
+          if(rs-4 < 0){
+            rs = (12 + rs - 4)% 13; //turn around
+            output = [rs,rs,rs,rs];
+          }
+          else{
+            output = [rs-4,rs-4,rs-4,rs-4];
+          }
+          
+        }//in C, to resolution which is A 
         
         //firstNote + "," + 
         //console.log("outou" + output)

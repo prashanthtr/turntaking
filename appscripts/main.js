@@ -35,13 +35,12 @@ require(
 
     function userGuide (){
       
-      document.getElementById('userGuide').innerHTML = "<p> The following text provides instructions to play along with the a turn taking system whose goal is provide reflexive interactions. </p>";
+      document.getElementById('userGuide').innerHTML = "<p> The following text provides instructions to play along with the a turn taking system whose goal is extends a musical dialogue based on a AABA structure. </p>";
       
       document.getElementById('userGuide').innerHTML += "<h2> Key mapping </h2> Use the following key mapping to the input a sequence of notes. The notes are toggled on or off to indicate the sequence you have. Black notes are on and grey notes are off. <ol> <li>a - C</li> <li>s - C#</li> <li>d- D</li> <li>f- D#</li> <li>\g- E</li> <li>h - F</li> <li>j - F#</li> <li>k - G</li> <li>l - G#</li> <li>; - A</li> <li>' - A#</li> <li>Enter - B</li> </ol> <h3> R - reset cells, C - clear transcription </h3>";
-
-
-document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <ol> <li>Press a certain sequence of notes through keyboard key press. Press 'r' to signal the end of the user sequence and let the computer play. </li>  <li> Key more notes and continue the interaction from step 1.</li>  <li> Press 'c' to clear the transcription display box. </li>  </ol>"
       
+      document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <ol> <li> Press a sequence of 4 notes, same or different, through keyboard key press. Press 'r' to signal the end of the user sequence and let the computer play. </li> <li> Key more sequence of 4 notes and continue the interaction from step 1. </li> <li> Press 'c' to clear the transcription display box. </li> </ol>"
+
     }
     
     drawKeys();
@@ -182,7 +181,7 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
         }
       }
       transcription[k] = user[user.length-1];
-      
+
       var len = transcription.length;
 
       console.log(transcription);
@@ -208,6 +207,11 @@ document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <
       var agentResponse = analogy(transcription);
       
       document.getElementById("output").value += agentResponse.map(function(el){return noteMap[el];}).reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
+
+      document.getElementById("combined").value = transcription.map(function(el){return el.join(",");}).reduce(function(str1,str2){
+        return str1 + ",|," + str2;
+      })
+      document.getElementById("combined").value += ",|," + agentResponse.map(function(el){return noteMap[el];}).join(","); 
       
       //var agentResponse = caAgent(responseNotes);
       // response from Ca is howeveer, a string of notes.
