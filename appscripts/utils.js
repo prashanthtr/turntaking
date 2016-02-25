@@ -153,6 +153,7 @@ define(
         document.getElementById('transcription').value = "";
         document.getElementById('time').value = "";
         document.getElementById('output').value = "";
+        document.getElementById('combined').value = "";
                 
       }
 
