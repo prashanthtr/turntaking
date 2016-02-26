@@ -58,8 +58,7 @@ require(
       
       document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <ol> <li> Press a sequence of 8 notes through keyboard key press. Press 'r' to signal the end of the user sequence and let the computer play. </li> <li> Key more sequence of 8 notes and continue the interaction from step 1. </li> <li> Press 'c'to clear the transcription display box. </li> </ol>"
 
-      document.getElementById('userGuide').innerHTML += "<h2> Experimenting with structures </h2> Once you are able to get a desired structure through interaction (AABBAB), begin to change the parameters such as starting note, pitch ascent, tranpose number. Each of these parameters produce different variations of the same basic melody.of 8 notes through keyboard key press. <ol> <li> Starting note: Tranposes the system's response to another scale </li> <li> Pitch ascent: increases/decrease the rate of ascent to the highest pitch in the antecdent </li> <li> Transpose number: Changes the   Key more sequence of 8 notes and continue the interaction from step 1. </li> </ol>"
-
+      document.getElementById('userGuide').innerHTML += "<h2> Experimenting with structures </h2> Once you are able to get a desired structure through interaction (ABCCAB), begin to change the parameters such as starting note, pitch ascent, tranpose number. Each of these parameters produce different variations of the same basic melody.of 8 notes through keyboard key press. <ol> <li> Starting note: Shifts the the system's response to begin from another note (yet to do) </li> <li> Pitch ascent: increases/decrease the rate of ascent to the highest pitch in the B part of melody </li> <li> Transpose number: Changes the tranposition between B and C sections of the melody. </li> </ol>"
       
      }
     
