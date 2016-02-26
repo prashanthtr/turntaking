@@ -1,6 +1,6 @@
 require(
-  ["squareGrid","utils","sound-module","caAgent","markovAgent","analogy"],
-  function (squareGrid,utils,basicOsc,caAgent,markovAgent,analogy) {
+  ["squareGrid","utils","sound-module","caAgent","markovAgent","analogy","eliza"],
+  function (squareGrid,utils,basicOsc,caAgent,markovAgent,analogy,eliza) {
 
     // --------------- Inits ------------------------------
     
@@ -15,7 +15,15 @@ require(
       
       var svg = document.getElementById('bittorio');
       var rect = svg.getBoundingClientRect();
-      var nowy = (rect.height/2-25);
+      var nowy = (rect.height/2-50);
+
+      var cell = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+      // Set any attributes as desired
+      cell.setAttribute("x", 0);
+      cell.setAttribute("width", rect.width);
+      cell.setAttribute("height",  150);
+      cell.setAttribute("fill", "white");
+      cell.setAttribute("fill-opacity", "0.2");
       
       var lineTop = document.createElementNS("http://www.w3.org/2000/svg", "path");
       var lineBottom = document.createElementNS("http://www.w3.org/2000/svg", "path");
@@ -25,23 +33,35 @@ require(
       lineTop.setAttribute("d", "M0 " + nowy + " L"+ rect.width + " " + nowy + " Z");
       lineTop.setAttribute("stroke", "red");
 
-      lineBottom.setAttribute("d", "M0 " + (nowy+50) + " L"+ rect.width + " " + (nowy+50) + " Z");
+      lineBottom.setAttribute("d", "M0 " + (nowy+100) + " L"+ rect.width + " " + (nowy+100) + " Z");
       lineBottom.setAttribute("stroke", "red");
       
       svg.appendChild(lineTop);
       svg.appendChild(lineBottom);
+      svg.appendChild(cell);
     }
 
 
     function userGuide (){
       
-      document.getElementById('userGuide').innerHTML = "<p> The following text provides instructions to play along with the a turn taking system whose goal is extends a musical dialogue based on a AABA structure. </p>";
+      document.getElementById('userGuide').innerHTML = "<p> The following text provides instructions to play along with the a turn taking system whose goal is extends a musical dialogue using a 6 bar musical structure. The system specifically follows the structure ABCCAB (as in the popular melody twinkle twinkle little star). Each part of the melody, A,B,C need 8 quarter notes. </p>";
       
-      document.getElementById('userGuide').innerHTML += "<h2> Key mapping </h2> Use the following key mapping to the input a sequence of notes. The notes are toggled on or off to indicate the sequence you have. Black notes are on and grey notes are off. <ol> <li>a - C</li> <li>s - C#</li> <li>d- D</li> <li>f- D#</li> <li>\g- E</li> <li>h - F</li> <li>j - F#</li> <li>k - G</li> <li>l - G#</li> <li>; - A</li> <li>' - A#</li> <li>Enter - B</li> </ol> <h3> R - reset cells, C - clear transcription </h3>";
+      // document.getElementById('userGuide').innerHTML += "<h2> Key
+      // mapping </h2> Use the following key mapping to the input a
+      // sequence of notes. The notes are toggled on or off to
+      // indicate the sequence you have. Black notes are on and grey
+      // notes are off. <ol> <li>a - C</li> <li>s - C#</li> <li>d-
+      // D</li> <li>f- D#</li> <li>\g- E</li> <li>h - F</li> <li>j -
+      // F#</li> <li>k - G</li> <li>l - G#</li> <li>; - A</li> <li>' -
+      // A#</li> <li>Enter - B</li> </ol> <h3> R - reset cells, C -
+      // clear transcription </h3>";
       
-      document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <ol> <li> Press a sequence of 4 notes, same or different, through keyboard key press. Press 'r' to signal the end of the user sequence and let the computer play. </li> <li> Key more sequence of 4 notes and continue the interaction from step 1. </li> <li> Press 'c' to clear the transcription display box. </li> </ol>"
+      document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <ol> <li> Press a sequence of 8 notes through keyboard key press. Press 'r' to signal the end of the user sequence and let the computer play. </li> <li> Key more sequence of 8 notes and continue the interaction from step 1. </li> <li> Press 'c'to clear the transcription display box. </li> </ol>"
 
-    }
+      document.getElementById('userGuide').innerHTML += "<h2> Experimenting with structures </h2> Once you are able to get a desired structure through interaction (AABBAB), begin to change the parameters such as starting note, pitch ascent, tranpose number. Each of these parameters produce different variations of the same basic melody.of 8 notes through keyboard key press. <ol> <li> Starting note: Tranposes the system's response to another scale </li> <li> Pitch ascent: increases/decrease the rate of ascent to the highest pitch in the antecdent </li> <li> Transpose number: Changes the   Key more sequence of 8 notes and continue the interaction from step 1. </li> </ol>"
+
+      
+     }
     
     drawKeys();
     
@@ -60,13 +80,18 @@ require(
     
     document.onkeypress = function(evt){
 
-      console.log(evt)
+      //console.log(evt)
       var code = evt.which || evt.keyCode;
 
-      var keyMap = [97,115,100,102,103,104,106,107,108,59,39,46,47];
+      //s,e,d,r,f,g,y,h,u,j,i,k,l,
+       
+      var keyMap = [115, 101, 100, 114, 102, 103, 121, 104, 117, 106, 105, 107, 108];
+      //var keyMap = [97,115,100,102,103,104,106,107,108,59,39,46,47];
       var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
+
+      //bar break
       
-      if( code == 114){
+      if( code == 98){
         utils.clear(bittorio);
         document.getElementById("transcription").value += ",|,";
         document.getElementById("time").value += "," + (evt.timeStamp-timer) + ",|,"; //extra space
@@ -80,20 +105,20 @@ require(
         
         var findKey = function (code){
           return parseInt(
-            keyMap.map( function (val, ind, arr) { if (val == code) { console.log(ind); return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
+            keyMap.map( function (val, ind, arr) { if (val == code) { return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
           );
         }
 
         var findNote = function(note){
           return parseInt(
-            noteMap.map( function (val, ind, arr) { if (val == note) { console.log(ind); return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
+            noteMap.map( function (val, ind, arr) { if (val == note) { return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
           );
         }
         
         var str = document.getElementById("transcription").value;
         str = str.split(",");
         var oldInd = str[str.length-1];
-        console.log("old ind is" + oldInd)
+                        //console.log("old ind is" + oldInd)
         
         if ( oldInd == ""){
           //first time
@@ -162,7 +187,7 @@ require(
     
     function playResponse (){
 
-      console.log("entering")
+      //console.log("entering")
       //generates a response
 
       
@@ -170,7 +195,6 @@ require(
       var system = utils.parseTextBox("output");
       var timing = utils.parseTextBox("time");
 
-      
       var transcription = [];
       for(var i = 0,k=0; i < system.length; i++) {
         transcription[k] = user[i];
@@ -184,27 +208,27 @@ require(
 
       var len = transcription.length;
 
-      console.log(transcription);
+      //console.log(transcription);
       
       var responseNotes =  transcription[transcription.length-1],
           schedule = timing[timing.length-1];
       
       //console.log("number is" + number)
       
-      console.log("response is" + responseNotes);
-      console.log(schedule);
+      //console.log("response is" + responseNotes);
+      //console.log(schedule);
       
       var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
 
       var findNote = function(note){
         return parseInt(
-          noteMap.map( function (val, ind, arr) { if (val == note) { console.log(ind); return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
+          noteMap.map( function (val, ind, arr) { if (val == note) { return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
         );
       }
       
       var inputNote = responseNotes[0];
       //var agentResponse = markovAgent(transcription,inputNote);
-      var agentResponse = analogy(transcription);
+      var agentResponse = eliza(transcription);
       
       document.getElementById("output").value += agentResponse.map(function(el){return noteMap[el];}).reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
 
@@ -243,7 +267,7 @@ require(
         else {
           //var noteNum = findNote(el);
           var osc = basicOsc(el);
-          console.log("ele" + el)
+          //console.log("ele" + el)
           setTimeout( function(){osc.play();}, schedule[i]);
           setTimeout(function(){osc.release();},schedule[i+1]);
         }

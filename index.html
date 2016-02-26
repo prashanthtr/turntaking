@@ -7,14 +7,15 @@
     <!-- <script type="text/javascript" src="jslibs/raphael.js"></script> -->
     <!--  Use the require.js module loader, and tell it where our main JavaScript file is  -->
     <script type="text/javascript" data-main="appscripts/main.js" src="jslibs/require.js"> </script>
-    <title> Musical Turn taking AI </title>
+    <title> Structured interactions with a musical Eliza </title>
     <style type="text/css">
     </style>
 
   </head>
 
   <body bg-color="#000000">
-    <header> Musical Eliza: plays AA(t)BA sequences </header>
+    <header> Musical Eliza: plays melodies in the template of Twinkle
+    twinkle.. </header>
     
     <div id="main">
       
@@ -35,9 +36,8 @@
         <br>
 
         <center>
-        System responded with phrase <input type="text" id="phase"
-                                            value = "1" size="1pt"> </input> in
-                                            AA'BA
+          System is playing bars <input type="text" id="phase" value = "1-2"
+                                            size="2pt"> </input> 
         </center>
         
         <br>
@@ -73,7 +73,6 @@
         
         <br>
         Gain <input type="text" id="gain" value="0.25"> </input> <br>
-        CA Rule <input type="text" id="rule" value="0"> </input> <br>
         
         <b> Preset AIs </b>
 
@@ -81,6 +80,14 @@
           <option value="None"> ---- </option>
         </select>
         <br>
+        <br>
+
+        <h3> Melody control parameters </h3>
+        Starting note <input type="text" id="startNote" value="0"
+        size="2pt"> </input> <br>
+        Pitch ascent <input type="text" id="pitchAscent" value="2"
+        size="2pt"> </input> <br>
+        Tranpose number <input type="text" id="tranposeNum" value="2" size="2pt"> </input>
         
       </controls>
     </div>
