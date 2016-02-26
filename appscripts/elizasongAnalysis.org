@@ -1,0 +1,134 @@
+Song1:
+
+| QC QC QG QG | QA QA HG | QF QF QE QE | QD QD HC |
+| QG QG QF QF | QE QE HD | QG QG QF QF | QE QE HD |
+| QC QC QG QG | QA QA HG | QF QF QE QE | QD QD HC |
+
+| C C G G | A A G . | F F E E | D D C . |
+| G G F F | E E D . | G G F F | E E D . |
+| C C G G | A A G . | F F E E | D D C . |
+
+| C C G G | A A G G | F F E E | D D C C |
+| G G F F | E E D D | G G F F | E E D D |
+| C C G G | A A G G | F F E E | D D C C |
+
+| 0 0 7 7 | 9 9 7 7 | 5 5 4 4 | 2 2 0 0 |
+| 7 7 5 5 | 4 4 2 2 | 7 7 5 5 | 4 4 2 2 |
+| 0 0 7 7 | 9 9 7 7 | 5 5 4 4 | 2 2 0 0 |
+
+1-2=3-4
+1-4=9-12
+5-6=7-8
+7-8=11-12
+
+Time signature: 
+4/4 , 3/4 etc
+
+Starting note: Tonic 
+Ending note: Tonic 
+
+- A-C structure: 3 part, 2 part.
+  - Each part is 4 bars.
+  - 2 part: Resolution occurs in 2 parts (almost no melody is like that?)
+  - 3 part: Resolution occurs in 3 parts (or 12 bars, twinkle twinkle)
+  - 4 part: Resolution occurs in 3 parts (or 16 bars, row row row your
+    boat)
+  
+- A-C structure: (3 part A-C structure)
+
+  - 3 part AC structure: with third part same as first part
+    - Any line that ends with a tonic is the ending of the first part
+
+  - 3 part AC structure: no note rhythm changes, and
+    - System takes a rhythm change as a new composition
+
+  - 3 part AC structure: both parts of the second part are identical
+    - segment that is identical to the previous 8 bars.
+
+  - 3 part AC structure: 3-4,7-8 is a transpose up by a certain
+    amount, 7-8,11-12 is tranpose down by same amount.
+
+- A-C structure recognition and output for every 2bars 
+  
+  - Controls: 
+    - N:0
+    - n:2
+    - t:2
+
+  - function (rhythmic structure (2q,2q,2q,1h), scale (to be more consistent))
+    
+  - 1-2 bars: 
+    - No input yet
+    - Conditions:
+      - Ending note is the tonic
+      - No of input segments > 8
+      - No of segments - 8 is identical to input 
+
+    - output: 1) repeat rhythmic structure of input 
+      2) pick a number "3n" that is within octave 
+      3) create two pairs of quarter notes, 3n, 2n, n descending to
+         tonic by a tone
+      4) End with the tonic, half note.
+
+  - 3-4 bars
+    - Ending note of the last input is not a tonic,
+    - Beginning note of the last input is a tonic 
+    - No of input segments !> 8
+    - No of segments - 8 is not identical 
+
+    - Output: 1) pick a transpose number (t:control) 
+      2) every note of current input + t  
+
+  - 5-6 bars 
+    - Ending of the input is a tonic 
+    - Beginning note is not a tonic 
+    - No of input segments !> 11
+    - Last input and No of segments - 8 are not identical 
+    
+    - Output: Repeat  
+      
+  - 7-8 bars 
+    - segment whose every note is a tranpose of the previous input
+      segment (the last 8 notes)
+
+    - Output: Repeat input from -6 bars
+
+  - 9-10 bars 
+    - Every note of last input is identical to every note of last-last
+      input
+
+    - Output: Repeat input from -6 bars 
+
+  - 11-12 bars (Start a new melody)
+    - Beginning note of the last input is tonic
+    - Ending note is not a tonic
+    - No of input segments > 8
+    - No of segments - 8 is identical to input 
+
+    - Output: 1) pick a Note "N" randomly from 12 (that's it!)
+      2) (2Q"N" -up- 2Q"N+7" -up- 2Q"N+9" -down- 1H"N+7")
+
+
+Song2:
+
+| H.C       | H.C       | HC QD    | H.E      |
+| HE QD     | HE QF     | H.G_     | H.G      |
+| QC5 QC QC | QG4 QG QG | QE QE QE | QC QC QC |
+| HG QF     | HE QD     | H.C_     | H.C      |
+
+| C . .  | C . .  | C . D | E . . |
+| E . D  | E . F  | G . . | G . . |
+| C5 C C | G4 G G | E E E | C C C |
+| G . F  | E . D  | C . . | C . . |
+
+| 0 . .    | 0 . . | 0 . 2 | 4 . . |
+| 4 . 2    | 4 . 5 | 7 . . | 7 . . |
+| 13 13 13 | 7 7 7 | 4 4 4 | 0 0 0 |
+| 7 . 5    | 4 . 2 | 0 . . | 0 . . |
+
+3-4=5-6
+5-8=13-16
+9-10=11-12
+
+
+
