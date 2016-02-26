@@ -20,7 +20,7 @@ define(
       }
       
       //uses the note relations to form an abstract description of transcription
-      function abstraction (lastPhrase){
+      function template (lastPhrase){
         lastPhrase = lastPhrase.map( findNote);
         var abstr = lastPhrase.map(function(el,ind,arr){
           if( ind == 0 ){return el;}
@@ -59,55 +59,108 @@ define(
       function analogyGen(inputSeq){
         
         var output = [];
-        var lastPhrase = inputSeq[inputSeq.length-1];
-
-        var abstLast = abstraction(lastPhrase);
-        var seqMatch = findNote(lastPhrase[0]) + "000";
 
         //console.log("last phrase s" + lastPhrase);
         // console.log("abstr of last phrase is" + abstLast)
         //console.log(  seqMatch );
-        
-        if( abstLast.join("") == seqMatch ){
-          if( inputSeq.length == 1 ){
+
+        if( inputSeq.length == 1 ){ //can be in 1,or 3
+
+          var lastPhrase = inputSeq[0];
+          var abstLast = template(lastPhrase); //get template lastphrase
+          var seqMatch = findNote(lastPhrase[0]) + "000";
+
+          if(abstLast.join("") == seqMatch){ //phase A produces A' by 2
             console.log("phrase 1")
             document.getElementById("phase").value = 2;
-          
-            output = lastPhrase.map(findNote).map(function(el) {return el+2;});
-          }// A mode, tranpose by 1
-          else {
-            var secondLast = inputSeq[inputSeq.length-2];
-            if( lastPhrase[0] - secondLast[0] == 2){ //second mode only tone increase
-              console.log("phrase 2");
-              document.getElementById("phase").value = 3;
-          
-              output = lastPhrase.map(findNote).map(function(el,ind,arr) {return el+ind*2;}); //increase every note by its position
-            }
-            else{ //still A mode only
-              console.log("phrase 2");
-              document.getElementById("phase").value = 2;
-          
-              output = lastPhrase.map(findNote).map(function(el) {return el+2;});
-            }
+            output = lastPhrase.map(findNote).map(function(el) {return (el+2)%13;});
+          }
+          else{ //tries to start a new phrase.
+
+            document.getElementById("phase").value = 1;
+            output = lastPhrase.map(findNote).map( function(el,ind,arr){
+              var rs = arr[0] - 2; //only do semitone decrease
+              if(rs < 0){
+                return (6 + rs)% 13; //turn around
+              }
+              else{
+                return rs;
+              }
+              
+            });
+
+            // var rs = lastPhrase.map(findNote)[0]; 
+            // if(rs-4 < 0){
+            //   rs = (12 + rs - 4)% 13; //turn around
+            //   output = [rs,rs,rs,rs];
+            // }
+            // else{
+            //   output = [rs-4,rs-4,rs-4,rs-4];
+            // }
           }
         }
-        else{
-          console.log("phrase 4");
-          document.getElementById("phase").value = 4;
-          var rs = inputSeq[inputSeq.length-1].map(findNote)[0];
-          if(rs-4 < 0){
-            rs = (12 + rs - 4)% 13; //turn around
-            output = [rs,rs,rs,rs];
+        else{ //can be phase 2, 3, or 4
+          var len = inputSeq.length;
+          var lastPhrase = inputSeq[len-1];
+          var secondLast = inputSeq[len-2];
+          
+          if(  template(lastPhrase).join("") == (findNote(lastPhrase[0]) + "000") && template(secondLast).join("") == (findNote(secondLast[0]) + "000")  ){ //second phase
+            document.getElementById("phase").value = 3;
+            var diff = findNote(secondLast[0]) - findNote(lastPhrase[0]);
+            output = lastPhrase.map(findNote).map(function(el,ind,arr) {
+              if( ind == arr.length-1){
+                return (el + (ind - 1)*2)%13; //come back
+              }
+              else{
+                return (el+(ind+1)*2)%13;
+              }
+            });
+               //quick ascent  // could be diff for faster ascent
           }
-          else{
-            output = [rs-4,rs-4,rs-4,rs-4];
+          else if ( template(lastPhrase).join("") == (findNote(lastPhrase[0]) + "000") && template(secondLast).join("") != (findNote(secondLast[0]) + "000") ){ //fourth phase
+            document.getElementById("phase").value = 1;
+            var Aseq = inputSeq[inputSeq.length-3];
+            console.log("here" + Aseq)
+            output = Aseq.map(findNote).map(function(el,ind,arr) {return (el+5)%13;}); // transpose by 5 for the next section
+          }
+          else{ //phrase 3, resolving the third phrase
+            
+            document.getElementById("phase").value = 4;
+            var sl = secondLast.map(findNote)[0];
+            var fl = lastPhrase.map(findNote)[0]; 
+            var tl = inputSeq[inputSeq.length-3].map(findNote)[0];
+            
+            var diff = sl - tl; //speed of melodic ascent that we used.
+            output = lastPhrase.map(findNote).map( function(el,ind,arr){
+              var rs;
+              if( ind - 1 < 0 ){
+                rs = el - 2*ind;
+              }
+              else{
+                 rs = el - 2*ind; // last note back to tonic
+              }
+              if(rs < 0){
+                return (6 + rs)% 13; //turn around
+              }
+              else{
+                return rs;
+              }
+            }); 
+            
+            // if(fl-diff < 0){
+            //   fl = (12 + fl - diff)% 13; //speed of melodic descent 
+            //   output = [fl,fl,fl,fl];
+            // }
+            // else{
+            //   output = [fl-diff,fl-diff,fl-diff,fl-diff];
+            // }
+            
           }
           
-        }//in C, to resolution which is A 
+        }
         
         //firstNote + "," + 
         //console.log("outou" + output)
-
         return output;
       }
       
@@ -152,3 +205,41 @@ define(
         //     // }//staying within octave
         //     else return output[i] = -12; //constant C
         //   }
+
+
+        // if( abstLast.join("") == seqMatch ){
+        //   if( inputSeq.length == 1 ){
+        //     console.log("phrase 1")
+        //     document.getElementById("phase").value = 2;
+          
+        //     output = lastPhrase.map(findNote).map(function(el) {return el+2;});
+        //   }// A mode, tranpose by 1
+        //   else {
+        //     var secondLast = inputSeq[inputSeq.length-2];
+        //     if( lastPhrase[0] - secondLast[0] == 2){ //second mode only tone increase
+        //       console.log("phrase 2");
+        //       document.getElementById("phase").value = 3;
+          
+        //       output = lastPhrase.map(findNote).map(function(el,ind,arr) {return el+ind*2;}); //increase every note by its position
+        //     }
+        //     else{ //still A mode only
+        //       console.log("phrase 2");
+        //       document.getElementById("phase").value = 2;
+          
+        //       output = lastPhrase.map(findNote).map(function(el) {return el+2;});
+        //     }
+        //   }
+        // }
+        // else{
+        //   console.log("phrase 4");
+        //   document.getElementById("phase").value = 4;
+        //   var rs = inputSeq[inputSeq.length-1].map(findNote)[0];
+        //   if(rs-4 < 0){
+        //     rs = (12 + rs - 4)% 13; //turn around
+        //     output = [rs,rs,rs,rs];
+        //   }
+        //   else{
+        //     output = [rs-4,rs-4,rs-4,rs-4];
+        //   }
+          
+        // }//in C, to resolution which is A 
