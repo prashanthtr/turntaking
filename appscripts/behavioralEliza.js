@@ -65,10 +65,10 @@ define(
       function getArrInterval( phraseTime){
         
         var intervals = phraseTime.map(function(el,ind,arr){
-          if( ind == 0 ){
-            return 1;
-          }
-          else if(ind == arr.length-1){
+          //if( ind == 0 ){
+          //  return 1;
+          //}
+          if(ind == arr.length-1){
             return 1;
           }
           else{
@@ -84,45 +84,75 @@ define(
           }
         });
 
-        // //inverse of intervals [various ways to decide this]
-        // var inverse = intervals.map(function(el){
-        //   return inverseFn(el);
-        // });
+        console.log("intervals is" + intervals)
+        return intervals; 
+      }
+
+
+      // Recgonizes pitch duration between +1/-1 pitch/time intervals, double
+      //interval is something greater than > than 1.4 of the original
+      // simplest algo needs 3 pitches to find relations, t1,t0,t-1. 
+      function getPitchInterval( pitch){
+        
+        var intervals = pitch.map(function(el,ind,arr){
+          //if( ind == 0 ){
+            //return 1;
+          //}
+          if(ind == arr.length-1){
+            return 0;
+          }
+          else{
+            if ( arr[ind+1] - el  > 1.4*(el - arr[ind-1]) ){
+              return 2; //percievable increase in pitch
+            }
+            else if( arr[ind+1] - el  < 0.6*(el - arr[ind-1])  ){
+              return -2; // percievable decrease in pitch
+            }
+            else{
+              return 1; //preserve the distance
+            }
+          }
+        });
         
         console.log("intervals is" + intervals)
-        //console.log("inverse is" + inverse);
-        
         return intervals; 
-        
       }
+      
 
       //-------------- Actual transformation functions ----
       
       //takes the original phrase and transforms it using the
       //intervals 
       function transformTime ( phraseTime, transformFn ){
-        
-        var intervals = getArrInterval(phraseTime);
-        intervals = transformFn ( intervals);
 
-        console.log("new inteval" + intervals)
-        //uses previous time to calculate .
-        var timeModel = [];
-        for(var ind = 0; ind < intervals.length; ind++) {
-          if(ind == 0){
-            timeModel[ind] = phraseTime[ind];
-          }
-          else{
-            var rescaledTime = timeModel[ind-1] + (phraseTime[ind] - phraseTime[ind-1])*intervals[ind];
-            //console.log("scale is" + typeof(phraseTime[ind]) + " " + typeof(rescaledTime))
-            timeModel[ind] = rescaledTime; //rescaling the time
-          }
+        if( document.getElementById("timeTransforms").value == "mirror" ){
+          return phraseTime;
         }
-        
-        console.log("phrase time is" + phraseTime)
-        console.log("time model is" + timeModel);
+        else{
+          var intervals = getArrInterval(phraseTime);
+          intervals = transformFn ( intervals);
 
-        return timeModel; //return inverse;
+          console.log("new inteval" + intervals)
+          //uses previous time to calculate .
+          var timeModel = [];
+          for(var ind = 0; ind < intervals.length; ind++) {
+            if(ind == 0){
+              timeModel[ind] = phraseTime[ind];
+            }
+            else{
+              var rescaledTime = timeModel[ind-1] + (phraseTime[ind] - phraseTime[ind-1])*intervals[ind];
+              //console.log("scale is" + typeof(phraseTime[ind]) + " " + typeof(rescaledTime))
+              timeModel[ind] = rescaledTime; //rescaling the time
+            }
+          }
+          
+          console.log("phrase time is" + phraseTime)
+          console.log("time model is" + timeModel);
+
+          return timeModel; //return inverse;
+
+        }
+
       }
 
 
@@ -130,39 +160,50 @@ define(
       //intervals 
       function transformPitch( pitch, transformFn ){
 
-        var intervals = getArrInterval(pitch);
-        intervals = transformFn ( intervals);
-        
-        //uses previous pitches and intervals to calculate new pitch .
-        var pitchModel = [];
-        for(var ind = 0; ind < intervals.length; ind++) {
-          if(ind == 0){
-            pitchModel[ind] = pitch[ind];
+        if( document.getElementById("pitchTransforms").value == "mirror"){
+          return pitch;
+        }
+        else{
+          
+          var intervals = getPitchInterval(pitch);
+          intervals = transformFn ( intervals);
+          
+          //uses previous pitches and intervals to calculate new pitch .
+          var pitchModel = [];
+          for(var ind = 0; ind < intervals.length; ind++) {
+            if(ind == 0){
+              pitchModel[ind] = pitch[ind];
+            }
+            else{
+              //inverts if the distance is within a certain, or else
+              //magnifies or decreases distance
+              pitchModel[ind] = pitch[ind-1] + intervals[ind]*(pitch[ind] - pitch[ind-1]); 
+              //console.log("scale is" + typeof(pitch[ind]) + " " + typeof(rescaledTime))
+              pitchModel[ind] = Math.round(pitchModel[ind]);
+            }
           }
-          else{
-            //inverts if the distance is within a certain, or else
-            //magnifies or decreases distance
-            pitchModel[ind] = pitch[ind-1] + intervals[ind]*(pitch[ind] - pitch[ind-1]); 
-            //console.log("scale is" + typeof(pitch[ind]) + " " + typeof(rescaledTime))
-            pitchModel[ind] = Math.round(pitchModel[ind]);
-          }
+          
+          console.log("pitches are" + pitch)
+          console.log("pitch model is" + pitchModel);
+
+          return pitchModel; //return inverse;
         }
         
-        console.log("pitches are" + pitch)
-        console.log("pitch model is" + pitchModel);
-
-        return pitchModel; //return inverse;
       }
 
       //-------- custom functions ------------//
 
+      function mirror(){
+        return 1;
+      }
+      
       //inverse of intervals [various ways to decide this]
-      function mirror (arr) {
+      function cmirror (arr) {
         return arr; 
       }
       
       function reverse (arr){
-        console.log("originak is " + arr)
+        console.log("original is " + arr)
         return arr.map(function(el,ind,arr){
           return arr[arr.length-1-ind]; 
         });
@@ -185,10 +226,11 @@ define(
       var timeTransform = eval(document.getElementById("timeTransforms").value);
       var loudnessTransfrom = eval(document.getElementById("timeTransforms").value);
 
-      console.log("timetra is" + timeTransform)
-      
+      console.log("timetrans is" + timeTransform)
+
       agentResponse["schedule"] = transformTime( inputTime, timeTransform );
       agentResponse["pitch"] = transformPitch(inputPitch, pitchTransform);
+
       //agentResponse["loudness"] = transformLoudness(input, getPitchInterval(input));
 
       // groups

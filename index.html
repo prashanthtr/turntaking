@@ -7,15 +7,14 @@
     <!-- <script type="text/javascript" src="jslibs/raphael.js"></script> -->
     <!--  Use the require.js module loader, and tell it where our main JavaScript file is  -->
     <script type="text/javascript" data-main="appscripts/main.js" src="jslibs/require.js"> </script>
-    <title> Structured interactions with a musical Eliza </title>
+    <title> Behavior based system for musical improvisation </title>
     <style type="text/css">
     </style>
 
   </head>
 
   <body bg-color="#000000">
-    <header> Musical Eliza: plays melodies in the template of Twinkle
-    twinkle.. </header>
+    <header> Behavior based turn-taking musical improvisation system  </header>
     
     <div id="main">
       
@@ -35,10 +34,10 @@
         </svg>
         <br>
 
-        <center>
-          System is playing bars <input type="text" id="phase" value = "1-2"
-                                            size="2pt"> </input> 
-        </center>
+        <!-- <center> -->
+        <!--   System is playing bars <input type="text" id="phase" value = "1-2" -->
+        <!--                                     size="2pt"> </input>  -->
+        <!-- </center> -->
         
         <br>
         Combined score <br>
@@ -75,9 +74,12 @@
         Gain <input type="text" id="gain" value="0.25"> </input> <br>
         <br>
 
-        <b> Pitch transforms </b>
+        <h3> System behaviors </h3>
+        
+        <b> Pitch interval </b>
         <select id="pitchTransforms">
           <option value="mirror"> Mirror </option>
+          <option value="cmirror"> Partially mirror </option>
           <option value="reverse"> Reverse </option>
           <option value="transpose"> Transpose </option>
           <option value="reverseTranspose"> Reverse &
@@ -87,18 +89,20 @@
         <br>
         <br>
 
-        <b> Time transforms </b>
+        <b> Time intervals </b>
         <select id="timeTransforms">
           <option value="mirror"> Mirror </option>
+          <option value="cmirror"> Partially mirror </option>
           <option value="invert"> Invert </option>
           <option value="reverse"> Reverse </option>
           <option value="invertReverse"> Invert and reverse </option>
         </select>
         <br> <br>
 
-        <b> Loudness transforms </b>
+        <b> Loudness interval </b>
         <select id="loudnessTransforms">
           <option value="mirror"> Mirror </option>
+          <option value="cmirror"> Partially mirror </option>
           <option value="invert"> Invert </option>
           <option value="reverse"> Reverse </option>
           <option value="invertReverse"> Invert and reverse </option>
@@ -116,14 +120,14 @@
         </select>
         <br>
         <br>
-        <b> Thresholds </b> <br>
+        <!-- <b> Thresholds </b> <br> -->
         
-        Max threshold <input type="range" id="maxTresh" value="1.4" min="1"
-                             max="2" step="0.1"> </input>
-        <input type="text" id="maxT" value="1.4"> </input> <br>
+        <!-- Max threshold <input type="range" id="maxTresh" value="1.4" min="1" -->
+        <!--                      max="2" step="0.1"> </input> -->
+        <!-- <input type="text" id="maxT" value="1.4"> </input> <br> -->
         
-        Min threshold <input type="range" id="minTresh" value="0.7" min="0.5" max="1" step="0.1">
-        <input type="text" id="minT" value="0.6"> </input> <br>
+        <!-- Min threshold <input type="range" id="minTresh" value="0.7" min="0.5" max="1" step="0.1"> -->
+        <!-- <input type="text" id="minT" value="0.6"> </input> <br> -->
         
         <!-- <h3> Melody control parameters </h3> -->
         <!-- Starting note <input type="text" id="startNote" value="0" -->

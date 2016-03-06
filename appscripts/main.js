@@ -44,7 +44,7 @@ require(
 
     function userGuide (){
       
-      document.getElementById('userGuide').innerHTML = "<p> The following text provides instructions to play along with the a turn taking system whose goal is to extend musical dialogue in 6 bar musical structure. The system specifically follows the structure ABCCAB (as in the popular melody twinkle twinkle little star). Each part of the melody, A,B,C need 8 quarter notes. </p>";
+      document.getElementById('userGuide').innerHTML = "<p> The following text provides instructions to play along with the a turn taking system. The system has a set of behaviors for pitch, duration and loudness, that the user can select. User can select a particular type of system behaviors, and improvise by taking turns. </p>";
       
       // document.getElementById('userGuide').innerHTML += "<h2> Key
       // mapping </h2> Use the following key mapping to the input a
@@ -56,9 +56,9 @@ require(
       // A#</li> <li>Enter - B</li> </ol> <h3> R - reset cells, C -
       // clear transcription </h3>";
       
-      document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <ol> <li> Press a sequence of 8 notes through keyboard key press. Press 'b' to signal the end of the user sequence and let the computer play. </li> <li> Key more sequence of 8 notes and continue the interaction from step 1. </li> <li> Press 'c'to clear the transcription display box. </li> </ol>"
+      document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <ol> <li> Set each system behaviors separately (mirror, inverse, reverse) in the boxes in the left most column. </li> <li> 'Mirror' exactly repeats the user's input. All other behaviors change some aspect of the music in their response to the user. </li> <li> Press any sequence of notes through keyboard key presses. Press 'b' to signal the end of the user sequence and let the computer respond based on the behavior. </li> <li> Key more sequence of notes and continue the interaction from step 1. </li> <li> Press 'c'to clear the transcription display box. </li> </ol>"
 
-      document.getElementById('userGuide').innerHTML += "<h2> Experimenting with structures </h2> Once you are able to get a desired structure through interaction (ABCCAB), begin to change the parameters such as starting note, pitch ascent, tranpose number. Each of these parameters produce different variations of the same basic melody.of 8 notes through keyboard key press. <ol> <li> Starting note: Shifts the the system's response to begin from another note (yet to do) </li> <li> Pitch ascent: increases/decrease the rate of ascent to the highest pitch in the B part of melody </li> <li> Transpose number: Changes the tranposition between B and C sections of the melody. </li> </ol>"
+      document.getElementById('userGuide').innerHTML += "<br> <h2> Experiment with structures </h2> Once you are able to understand what each behavior does separately, select multiple behaviors using the boxes to have a certain combinations of improvisational behaviors. A description of behaviors are: <li> <b> Exact mirror: </b> Exactly mirrors the user input </li> <li> <b> Partial mirror: </b> Closely mirrors the pitch/time/loudness when interval changes are within a threshold, but exagerates the changes when they are more than threshold.  </li> <li> <b> Inverse: </b> Inverts the interval changes in pitch/time/loudness intervals between successive notes. <li> <b> Reverse: </b> Reverses the interval changes in  pitch/time/loudness intervals between successive notes from end to start. </li> </ol>"
       
      }
     
@@ -218,11 +218,21 @@ require(
       //console.log(schedule);
       
       var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
-
+      
       var findNote = function(note){
         return parseInt(
           noteMap.map( function (val, ind, arr) { if (val == note) { return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
         );
+      }
+
+      // gets a number relative to center octave and outputs the
+      // note and the octave it is in
+      var number2Note = function(freq){
+        // 0 -11 octave 1, 11-22 octave 2
+        var newTonic = freq - freq%12;  //new tonic
+        var octave = newTonic/12;
+        var note = noteMap[Math.abs(freq%12)] + "" + octave;
+        return note;
       }
       
       //var inputNote = responseNotes[0];
@@ -236,12 +246,13 @@ require(
       console.log("new schedule is" + schedule);
       
       
-      document.getElementById("output").value += agentResponse.map(function(el){return noteMap[el];}).reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
+      document.getElementById("output").value += agentResponse.map(function(el){return number2Note(el);}).reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
 
       document.getElementById("combined").value = transcription.map(function(el){return el.join(",");}).reduce(function(str1,str2){
         return str1 + ",|," + str2;
       })
-      document.getElementById("combined").value += ",|," + agentResponse.map(function(el){return noteMap[el];}).join(","); 
+
+      document.getElementById("combined").value += ",|," + agentResponse.map(function(el){return number2Note(el);}).join(","); 
       
       //var agentResponse = caAgent(responseNotes);
       // response from Ca is howeveer, a string of notes.
