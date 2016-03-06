@@ -64,7 +64,7 @@
         <b> Controls: </b> <br>
 
         
-        <input type="button" id="start" value="Start"> </input>
+        <!-- <input type="button" id="start" value="Start"> </input> -->
         <!-- <input type="button" id="stop" value="stop">  </input> -->
         <!-- <input type="button" id="reset" value="Reset">  </input> -->
         <br>
@@ -73,21 +73,64 @@
         
         <br>
         Gain <input type="text" id="gain" value="0.25"> </input> <br>
-        
-        <b> Preset AIs </b>
+        <br>
 
-        <select id="preset">
-          <option value="None"> ---- </option>
+        <b> Pitch transforms </b>
+        <select id="pitchTransforms">
+          <option value="mirror"> Mirror </option>
+          <option value="reverse"> Reverse </option>
+          <option value="transpose"> Transpose </option>
+          <option value="reverseTranspose"> Reverse &
+            transpose </option>
+          <option value="transposeReverse"> Transpose & Reverse </option>
         </select>
         <br>
         <br>
 
-        <h3> Melody control parameters </h3>
-        Starting note <input type="text" id="startNote" value="0"
-        size="2pt"> </input> <br>
-        Pitch ascent <input type="text" id="pitchAscent" value="2"
-        size="2pt"> </input> <br>
-        Tranpose number <input type="text" id="tranposeNum" value="2" size="2pt"> </input>
+        <b> Time transforms </b>
+        <select id="timeTransforms">
+          <option value="mirror"> Mirror </option>
+          <option value="invert"> Invert </option>
+          <option value="reverse"> Reverse </option>
+          <option value="invertReverse"> Invert and reverse </option>
+        </select>
+        <br> <br>
+
+        <b> Loudness transforms </b>
+        <select id="loudnessTransforms">
+          <option value="mirror"> Mirror </option>
+          <option value="invert"> Invert </option>
+          <option value="reverse"> Reverse </option>
+          <option value="invertReverse"> Invert and reverse </option>
+        </select>
+        <br>
+        <br>
+        
+        <b> Note grouping </b> <br>
+        <select id="noteGroups">
+          <option value="2notes"> +/- 1 note </option>
+          <option value="3notes"> +/- 2 notes </option>
+          <option value="4notes"> +/- 3 notes </option>
+          <option value="halfnotes"> +/- half played note </option>
+          <option value="full"> All played notes </option>
+        </select>
+        <br>
+        <br>
+        <b> Thresholds </b> <br>
+        
+        Max threshold <input type="range" id="maxTresh" value="1.4" min="1"
+                             max="2" step="0.1"> </input>
+        <input type="text" id="maxT" value="1.4"> </input> <br>
+        
+        Min threshold <input type="range" id="minTresh" value="0.7" min="0.5" max="1" step="0.1">
+        <input type="text" id="minT" value="0.6"> </input> <br>
+        
+        <!-- <h3> Melody control parameters </h3> -->
+        <!-- Starting note <input type="text" id="startNote" value="0" -->
+        <!-- size="2pt"> </input> <br> -->
+        <!-- Pitch ascent <input type="text" id="pitchAscent" value="2" -->
+        <!-- size="2pt"> </input> <br> -->
+        <!-- Tranpose number <input type="text" id="tranposeNum" value="2" size="2pt"> </input> -->
         
       </controls>
     </div>

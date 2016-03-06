@@ -1,5 +1,5 @@
 require(
-  ["squareGrid","utils","sound-module","caAgent","markovAgent","analogy","eliza"],
+  ["squareGrid","utils","sound-module","caAgent","markovAgent","analogy","behavioralEliza"],
   function (squareGrid,utils,basicOsc,caAgent,markovAgent,analogy,eliza) {
 
     // --------------- Inits ------------------------------
@@ -225,9 +225,16 @@ require(
         );
       }
       
-      var inputNote = responseNotes[0];
+      //var inputNote = responseNotes[0];
       //var agentResponse = markovAgent(transcription,inputNote);
-      var agentResponse = eliza(transcription);
+      //var response = eliza(transcription);
+      var response = eliza(responseNotes, schedule)
+      
+      console.log("original schedule is" + schedule);
+      schedule = response["schedule"];
+      var agentResponse = response["pitch"];
+      console.log("new schedule is" + schedule);
+      
       
       document.getElementById("output").value += agentResponse.map(function(el){return noteMap[el];}).reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
 
@@ -271,9 +278,7 @@ require(
           setTimeout(function(){osc.release();},schedule[i+1]);
         }
       });
-      
     }
-    
     
     /// ------------ Timers -------------------------------
 
