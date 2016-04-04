@@ -1,5 +1,5 @@
 require(
-  ["squareGrid","utils","sound-module","caAgent","markovAgent","analogy","behavioralEliza"],
+  ["squareGrid","utils","sound-module","caAgent","markovAgent","analogy","3partEliza"],
   function (squareGrid,utils,basicOsc,caAgent,markovAgent,analogy,eliza) {
 
     // --------------- Inits ------------------------------
@@ -245,13 +245,12 @@ require(
       var agentResponse = response["pitch"];
       console.log("new schedule is" + schedule);
       
-      
       document.getElementById("output").value += agentResponse.map(function(el){return number2Note(el);}).reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
 
       document.getElementById("combined").value = transcription.map(function(el){return el.join(",");}).reduce(function(str1,str2){
         return str1 + ",|," + str2;
       })
-
+      
       document.getElementById("combined").value += ",|," + agentResponse.map(function(el){return number2Note(el);}).join(","); 
       
       //var agentResponse = caAgent(responseNotes);
