@@ -80,7 +80,7 @@ define(
         timeModel[0] = 0;
         
         for(var ind = 1; ind < pitchModel.length; ind++) {
-          var rescaledTime = timeModel[ind-1] + interval;
+          timeModel[ind] = timeModel[ind-1] + interval;
         }
         
         console.log("phrase time is" + phraseTime)
