@@ -79,7 +79,7 @@ define(
         var interval = phraseTime[phraseTime.length-1] - phraseTime[phraseTime.length-2];
         timeModel[0] = 0;
         
-        for(var ind = 1; ind < pitchModel.length; ind++) {
+        for(var ind = 1; ind <= pitchModel.length; ind++) {
           timeModel[ind] = timeModel[ind-1] + interval;
         }
         
