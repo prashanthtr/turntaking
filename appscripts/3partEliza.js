@@ -144,8 +144,6 @@ define(
       // var timeTransform = eval(document.getElementById("timeTransforms").value);
       // var loudnessTransfrom = eval(document.getElementById("timeTransforms").value);
 
-     
-      
       pitchResponse = elizaResponse(inputPitch);
       agentResponse["pitch"] = pitchResponse;
       agentResponse["schedule"] = transformTime( inputTime, pitchResponse);

@@ -57,6 +57,7 @@ define(
       cell.ind = x;
       
       cell.tone = basicOsc(x);
+      console.log(cell.tone);
       
       //simply plays a note when the cell is on
       cell.play = function(){

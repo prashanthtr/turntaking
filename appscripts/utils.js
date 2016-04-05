@@ -193,6 +193,18 @@ define(
       //   }
       // }
 
+      // gets a number relative to center octave and outputs the
+      // note and the octave it is in
+      function number2Note (freq){
+
+        var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
+        // 0 -11 octave 1, 11-22 octave 2
+        var newTonic = freq - freq%12;  //new tonic
+        var octave = newTonic/12;
+        var note = noteMap[Math.abs(freq%12)] + "" + octave;
+        return note;
+      }
+
       var exports = {};
       // exports.init = init;
       // exports.getVal = getVal;
@@ -211,6 +223,7 @@ define(
       exports.clearTranscription = clearTranscription;
       exports.parseTextBox = parseTextBox;
       exports.prettyPrint = prettyPrint;
+      exports.number2Note = number2Note;
       return exports;
 
     });

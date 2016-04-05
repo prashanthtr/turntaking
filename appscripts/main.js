@@ -7,6 +7,9 @@ require(
     //bittorio display on which display happens
     var bittorio = [];
     var timer = -1;
+
+    var context = new AudioContext();
+    var osc, gain;
     
     // --------------------- FUNCTIONS ----------------
     
@@ -83,11 +86,11 @@ require(
       var code = evt.which || evt.keyCode;
 
       //s,e,d,r,f,g,y,h,u,j,i,k,l,
-       
+
       var keyMap = [115, 101, 100, 114, 102, 103, 121, 104, 117, 106, 105, 107, 108];
       //var keyMap = [97,115,100,102,103,104,106,107,108,59,39,46,47];
       var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
-
+      
       //bar break
       
       if( code == 98){
@@ -95,12 +98,16 @@ require(
         document.getElementById("transcription").value += ",|,";
         document.getElementById("time").value += "," + (evt.timeStamp-timer) + ",|,"; //extra space
         timer = -1;
+        stopSoundInfinite(context);
         playResponse();
       }
       else if( code == 99){
         utils.clearTranscription();
       }
       else if( keyMap.indexOf(code) != -1) {
+
+        //check if any oscillator is playing and first set it off to
+        //zero. Or does it fire by itself?
         
         var findKey = function (code){
           return parseInt(
@@ -117,14 +124,15 @@ require(
         var str = document.getElementById("transcription").value;
         str = str.split(",");
         var oldInd = str[str.length-1];
-                        //console.log("old ind is" + oldInd)
+        //console.log("old ind is" + oldInd)
         
         if ( oldInd == ""){
           //first time
         }
         else{
           //console.log("hi" + oldInd);
-          bittorio[findNote(oldInd)].updateFn(); //close the previous playing note
+          playSoundInfinite(context,findNote(oldInd));
+          bittorio[findNote(oldInd)].updateFn(); //change color of the the previous playing note
         }
         
         var index = findKey(code);
@@ -158,27 +166,15 @@ require(
       }
       
     }
-        
+    
     document.getElementById('clear').onclick = function(){
       utils.clear(bittorio);
     }
-
+    
     document.getElementById('clearT').onclick = function(){
       utils.clearTranscription();
     }
     
-    // document.getElementById('start').addEventListener("click", function(){
-    //   //console.log("here after reset");
-    //   rowChange(now);
-    //   if(run == null){
-    //     run = setInterval(simulate , parseFloat(document.getElementById("loopTime").value)); // start setInterval as "run";
-    //   }
-    // },true);
-
-    // document.getElementById('gain').onchange = function(){
-    //   utils.setGain(bittorio[now], utils.getVal("gain"));
-    // }
-
 
     // --------- system response ------------------
     // system reads from the transcription and randomly plays the last
@@ -189,12 +185,16 @@ require(
       //console.log("entering")
       //generates a response
 
+
+      //get the transcription from textbox into array
       
       var user = utils.parseTextBox("transcription");
       var system = utils.parseTextBox("output");
       var timing = utils.parseTextBox("time");
-
       var transcription = [];
+
+      //make sure last element of transcription contains what the
+      //user played?
       for(var i = 0,k=0; i < system.length; i++) {
         transcription[k] = user[i];
         k++;
@@ -205,91 +205,90 @@ require(
       }
       transcription[k] = user[user.length-1];
 
-      var len = transcription.length;
-
-      //console.log(transcription);
-      
+      // input to the agent
       var responseNotes =  transcription[transcription.length-1],
           schedule = timing[timing.length-1];
-      
-      //console.log("number is" + number)
-      
-      //console.log("response is" + responseNotes);
-      //console.log(schedule);
-      
-      var noteMap = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B", "C2"];
-      
-      var findNote = function(note){
-        return parseInt(
-          noteMap.map( function (val, ind, arr) { if (val == note) { return ind;} else {return "";}} ).reduce (function (str1, str2) {return str1 + str2;})
-        );
-      }
-
-      // gets a number relative to center octave and outputs the
-      // note and the octave it is in
-      var number2Note = function(freq){
-        // 0 -11 octave 1, 11-22 octave 2
-        var newTonic = freq - freq%12;  //new tonic
-        var octave = newTonic/12;
-        var note = noteMap[Math.abs(freq%12)] + "" + octave;
-        return note;
-      }
       
       //var inputNote = responseNotes[0];
       //var agentResponse = markovAgent(transcription,inputNote);
       //var response = eliza(transcription);
+
+      //agent response
       var response = eliza(responseNotes, schedule)
       
-      console.log("original schedule is" + schedule);
+      //console.log("original schedule is" + schedule);
       schedule = response["schedule"];
       var agentResponse = response["pitch"];
-      console.log("new schedule is" + schedule);
-      
-      document.getElementById("output").value += agentResponse.map(function(el){return number2Note(el);}).reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
+      //console.log("new schedule is" + schedule);
 
+
+      // agents output
+      document.getElementById("output").value += agentResponse.map(function(el){return utils.number2Note(el);}).reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
+
+      
+      //recreate the whole transcription from array. why?
       document.getElementById("combined").value = transcription.map(function(el){return el.join(",");}).reduce(function(str1,str2){
         return str1 + ",|," + str2;
       })
+
+      // add the agent's returned value on the combined output
+      document.getElementById("combined").value += ",|," + agentResponse.map(function(el){return utils.number2Note(el);}).join(","); 
       
-      document.getElementById("combined").value += ",|," + agentResponse.map(function(el){return number2Note(el);}).join(","); 
-      
-      //var agentResponse = caAgent(responseNotes);
-      // response from Ca is howeveer, a string of notes.
-      
-      // agentResponse.map ( function(el,i,arr){
-      //   if( el!=0 && !el ){
-      //     //nothing
-      //   }
-      //   else{
-      //       //el contains more than 1 element
-      //     el.map(function(el2,ind,arr){
-      //       if(!el2){
-      //         // do nothing
-      //       }
-      //       else{
-      //         var osc = basicOsc(ind);
-      //         console.log("ele2" + ind + "schedule" + schedule[i] + " " + schedule[i+1]);
-      //         setTimeout( function(){osc.play();}, schedule[i]);
-      //         setTimeout(function(){console.log("closing");  osc.release();},schedule[i+1]);
-      //       }
-      //     });
-      //   }
-      // });
-      
+      // acts a trigger for the notes
       agentResponse.map( function (el, i, arr){
         if( el!=0 && !el ){
           //nothing
         }
         else {
+          triggerSound( context, el, schedule[i], schedule[i+1] );
           //var noteNum = findNote(el);
-          var osc = basicOsc(el);
-          //console.log("ele" + el)
-          setTimeout( function(){osc.play();}, schedule[i]);
-          setTimeout(function(){osc.release();},schedule[i+1]);
+          // var osc = basicOsc(el);
+          // //console.log("ele" + el)
+          // setTimeout( function(){osc.play();}, schedule[i]);
+          // setTimeout(function(){osc.release();},schedule[i+1]);
         }
       });
     }
     
+    //-------triggering the sounds within audio context -----//
+
+    function triggerSound (context,freq, startTime,endTime){
+      
+      osc = context.createOscillator();
+
+      gain = context.createGain();
+      osc.frequency.value = freq;
+      
+      osc.connect(gain);
+      gain.connect(context.destination);
+      
+      var now = context.currentTime;
+      osc.start(startTime);
+      
+      if( !endTime){
+        gain.gain.setValue(0.1);
+        /// hold the last note at low volume
+      }
+      else{
+        osc.stop(endTime);
+        //gain.gain.exponentialRampToValueAtTime(0.1, endTime);
+        // 500ms decay of gain.
+      }
+    }
+
+    function playSoundInfinite (context,freq){
+      
+      osc = context.createOscillator();
+      gain = context.createGain();
+      osc.frequency.value = freq;
+      osc.connect(gain);
+      gain.connect(context.destination);
+      osc.start(0); //play immediately
+    }
+    
+    function stopSoundInfinite (context){
+      osc.stop(0); //stop immediately
+    } 
     /// ------------ Timers -------------------------------
 
     //current timer - or the now row
