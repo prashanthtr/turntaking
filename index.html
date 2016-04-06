@@ -7,14 +7,14 @@
     <!-- <script type="text/javascript" src="jslibs/raphael.js"></script> -->
     <!--  Use the require.js module loader, and tell it where our main JavaScript file is  -->
     <script type="text/javascript" data-main="appscripts/main.js" src="jslibs/require.js"> </script>
-    <title> Behavior based system for musical improvisation </title>
+    <title> Eliza for musical turn taking </title>
     <style type="text/css">
     </style>
 
   </head>
 
   <body bg-color="#000000">
-    <header> Behavior based turn-taking musical improvisation system  </header>
+    <header> Eliza for musical turn taking  </header>
     
     <div id="main">
       
@@ -34,10 +34,10 @@
         </svg>
         <br>
 
-        <center>
-          Cur Interval is <input type="text" id="curInt" value = "0"
-                                 size="2pt"> </input>
-        </center>
+        <!-- <center> -->
+        <!--   Cur Interval is <input type="text" id="curInt" value = "0" -->
+        <!--                          size="2pt"> </input> -->
+        <!-- </center> -->
         
         <br>
         Combined score <br>
@@ -74,56 +74,56 @@
         <input type="button" id="clear" value="Clear cells"> </input> <br>
         <input type="button" id="clearT" value="Clear Transcription">  </input>
         
-        <br>
-        Gain <input type="text" id="gain" value="0.25"> </input> <br>
-        <br>
+        <!-- <br> -->
+        <!-- Gain <input type="text" id="gain" value="0.25"> </input> <br> -->
+        <!-- <br> -->
 
-        <h3> System behaviors </h3>
+        <!-- <h3> System behaviors </h3> -->
         
-        <b> Pitch interval </b>
-        <select id="pitchTransforms">
-          <option value="mirror"> Mirror </option>
-          <option value="cmirror"> Partially mirror </option>
-          <option value="reverse"> Reverse </option>
-          <option value="transpose"> Transpose </option>
-          <option value="reverseTranspose"> Reverse &
-            transpose </option>
-          <option value="transposeReverse"> Transpose & Reverse </option>
-        </select>
-        <br>
-        <br>
+        <!-- <b> Pitch interval </b> -->
+        <!-- <select id="pitchTransforms"> -->
+        <!--   <option value="mirror"> Mirror </option> -->
+        <!--   <option value="cmirror"> Partially mirror </option> -->
+        <!--   <option value="reverse"> Reverse </option> -->
+        <!--   <option value="transpose"> Transpose </option> -->
+        <!--   <option value="reverseTranspose"> Reverse & -->
+        <!--     transpose </option> -->
+        <!--   <option value="transposeReverse"> Transpose & Reverse </option> -->
+        <!-- </select> -->
+        <!-- <br> -->
+        <!-- <br> -->
 
-        <b> Time intervals </b>
-        <select id="timeTransforms">
-          <option value="mirror"> Mirror </option>
-          <option value="cmirror"> Partially mirror </option>
-          <option value="invert"> Invert </option>
-          <option value="reverse"> Reverse </option>
-          <option value="invertReverse"> Invert and reverse </option>
-        </select>
-        <br> <br>
+        <!-- <b> Time intervals </b> -->
+        <!-- <select id="timeTransforms"> -->
+        <!--   <option value="mirror"> Mirror </option> -->
+        <!--   <option value="cmirror"> Partially mirror </option> -->
+        <!--   <option value="invert"> Invert </option> -->
+        <!--   <option value="reverse"> Reverse </option> -->
+        <!--   <option value="invertReverse"> Invert and reverse </option> -->
+        <!-- </select> -->
+        <!-- <br> <br> -->
 
-        <b> Loudness interval </b>
-        <select id="loudnessTransforms">
-          <option value="mirror"> Mirror </option>
-          <option value="cmirror"> Partially mirror </option>
-          <option value="invert"> Invert </option>
-          <option value="reverse"> Reverse </option>
-          <option value="invertReverse"> Invert and reverse </option>
-        </select>
-        <br>
-        <br>
+        <!-- <b> Loudness interval </b> -->
+        <!-- <select id="loudnessTransforms"> -->
+        <!--   <option value="mirror"> Mirror </option> -->
+        <!--   <option value="cmirror"> Partially mirror </option> -->
+        <!--   <option value="invert"> Invert </option> -->
+        <!--   <option value="reverse"> Reverse </option> -->
+        <!--   <option value="invertReverse"> Invert and reverse </option> -->
+        <!-- </select> -->
+        <!-- <br> -->
+        <!-- <br> -->
         
-        <b> Note grouping </b> <br>
-        <select id="noteGroups">
-          <option value="2notes"> +/- 1 note </option>
-          <option value="3notes"> +/- 2 notes </option>
-          <option value="4notes"> +/- 3 notes </option>
-          <option value="halfnotes"> +/- half played note </option>
-          <option value="full"> All played notes </option>
-        </select>
-        <br>
-        <br>
+        <!-- <b> Note grouping </b> <br> -->
+        <!-- <select id="noteGroups"> -->
+        <!--   <option value="2notes"> +/- 1 note </option> -->
+        <!--   <option value="3notes"> +/- 2 notes </option> -->
+        <!--   <option value="4notes"> +/- 3 notes </option> -->
+        <!--   <option value="halfnotes"> +/- half played note </option> -->
+        <!--   <option value="full"> All played notes </option> -->
+        <!-- </select> -->
+        <!-- <br> -->
+        <!-- <br> -->
         <!-- <b> Thresholds </b> <br> -->
         
         <!-- Max threshold <input type="range" id="maxTresh" value="1.4" min="1" -->

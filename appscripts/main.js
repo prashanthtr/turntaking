@@ -48,7 +48,7 @@ require(
 
     function userGuide (){
       
-      document.getElementById('userGuide').innerHTML = "<p> The following text provides instructions to play along with the a turn taking system. The system has a set of behaviors for pitch, duration and loudness, that the user can select. User can select a particular type of system behaviors, and improvise by taking turns. </p>";
+      document.getElementById('userGuide').innerHTML = "<p> The following text provides instructions to play along with the a musical Eliza. The system extends an increasing or decreasing sequence of musical notes played by the user. Otherwise, it steadily holds the last note that the user played. </p>";
       
       // document.getElementById('userGuide').innerHTML += "<h2> Key
       // mapping </h2> Use the following key mapping to the input a
@@ -60,9 +60,7 @@ require(
       // A#</li> <li>Enter - B</li> </ol> <h3> R - reset cells, C -
       // clear transcription </h3>";
       
-      document.getElementById('userGuide').innerHTML += "<h2> User interaction </h2> <ol> <li> Set each system behaviors separately (mirror, inverse, reverse) in the boxes in the left most column. </li> <li> 'Mirror' exactly repeats the user's input. All other behaviors change some aspect of the music in their response to the user. </li> <li> Press any sequence of notes through keyboard key presses. Press 'b' to signal the end of the user sequence and let the computer respond based on the behavior. </li> <li> Key more sequence of notes and continue the interaction from step 1. </li> <li> Press 'c'to clear the transcription display box. </li> </ol>"
-
-      document.getElementById('userGuide').innerHTML += "<br> <h2> Experiment with structures </h2> Once you are able to understand what each behavior does separately, select multiple behaviors using the boxes to have a certain combinations of improvisational behaviors. A description of behaviors are: <li> <b> Exact mirror: </b> Exactly mirrors the user input </li> <li> <b> Partial mirror: </b> Closely mirrors the pitch/time/loudness when interval changes are within a threshold, but exagerates the changes when they are more than threshold.  </li> <li> <b> Inverse: </b> Inverts the interval changes in pitch/time/loudness intervals between successive notes. <li> <b> Reverse: </b> Reverses the interval changes in  pitch/time/loudness intervals between successive notes from end to start. </li> </ol>"
+      document.getElementById('userGuide').innerHTML += "<h2> User interaction: </h2> <ol> <li> User presses start to begin interacting with the system </li> <li> User keys in a sequence of notes in the keyboard piano and presses 'b' to signal the end of his turn. </li> <li> System responds by: 1) continues, if it finds an  increasing/decreasing sequence in the input, 2) otherwise, it holds the last note played by the user. </li> <li> User presses 'c'to clear the transcription display box to start a new interaction. </li> <li> User presses stop to end the interaction </li> </ol>"
       
      }
     
