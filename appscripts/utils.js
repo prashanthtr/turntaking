@@ -144,7 +144,7 @@ define(
           bittorio[col].state = 0;
           bittorio[col].changeColor();
           bittorio[col].userChange = 1;
-          bittorio[col].play()
+          //bittorio[col].play()
         }
       }
 

@@ -12,7 +12,7 @@ require.config({
 define(
   ["jsaSound/jsaModels/jsaOsc","utils"],
   function (basicOscFactory,utils){
-
+    
     return function (notenum){
 
       var basicOsc = basicOscFactory();

@@ -56,19 +56,19 @@ define(
       cell.userChange = 0;
       cell.ind = x;
       
-      cell.tone = basicOsc(x);
-      console.log(cell.tone);
+      //cell.tone = basicOsc(x);
+      // console.log(cell.tone);
       
-      //simply plays a note when the cell is on
-      cell.play = function(){
+      // //simply plays a note when the cell is on
+      // cell.play = function(){
 
-        if(this.state == 1){
-          this.tone.play();
-        }
-        else{
-          this.tone.release();
-        }
-      }
+      //   if(this.state == 1){
+      //     this.tone.play();
+      //   }
+      //   else{
+      //     this.tone.release();
+      //   }
+      // }
       
       //object events, declared
       cell.changeColor = function(){
@@ -93,7 +93,7 @@ define(
       cell.updateFn = function (){
         this.state = (this.state + 1)%2; //merely toggle
         this.changeColor(); 
-        this.play();
+        //this.play();
       }
       
       return cell;

@@ -23,7 +23,7 @@ define(
 
       //only sending in the last phrase for now
       var inputPitch = inputSeq.map(function(el){return findNote(el);});
-      var inputTime = inputTime.map(function(el){return parseInt(el)});
+      var inputTime = inputTime.map(function(el){return parseFloat(el)});
       
       // var startingNote = elementValue("startNote"),
       //     pitchAscent = elementValue("pitchAscent"),
@@ -79,13 +79,13 @@ define(
         var interval = phraseTime[phraseTime.length-1] - phraseTime[phraseTime.length-2];
         timeModel[0] = 0;
         
-        for(var ind = 1; ind <= pitchModel.length; ind++) {
+        for(var ind = 1; ind < pitchModel.length; ind++) {
           timeModel[ind] = timeModel[ind-1] + interval;
         }
         
         console.log("phrase time is" + phraseTime)
         console.log("time model is" + timeModel);
-
+        
         return timeModel; //return inverse;
       }
 
@@ -143,15 +143,12 @@ define(
       // var pitchTransform = eval(document.getElementById("pitchTransforms").value);
       // var timeTransform = eval(document.getElementById("timeTransforms").value);
       // var loudnessTransfrom = eval(document.getElementById("timeTransforms").value);
-
+      
       pitchResponse = elizaResponse(inputPitch);
       agentResponse["pitch"] = pitchResponse;
       agentResponse["schedule"] = transformTime( inputTime, pitchResponse);
       
       //agentResponse["loudness"] = transformLoudness(input, getPitchInterval(input));
-
-      // groups
-      //
       
       return agentResponse;
     }
