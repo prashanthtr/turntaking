@@ -1,6 +1,6 @@
 require(
-  ["squareGrid","utils","sound-module","caAgent","markovAgent","analogy","3partEliza"],
-  function (squareGrid,utils,basicOsc,caAgent,markovAgent,analogy,eliza) {
+  ["squareGrid","utils","sound-module"],
+  function (squareGrid,utils,basicOsc) {
 
     // --------------- Inits ------------------------------
     
@@ -10,6 +10,7 @@ require(
     var prevTime = -1;
     var context = new AudioContext();
     var osc, gain;
+    var schedule = [0,200,400,600,1400,1600], agentResponse = [1,2,3,4,3];
     soundSetup(context);
     
     // --------------------- FUNCTIONS ----------------
@@ -124,7 +125,7 @@ require(
         str = str.split(",");
         var oldInd = str[str.length-1];
         //console.log("old ind is" + oldInd)
-
+        
         //Switch of the playing note,
         //first time, so oldInd is empty.
         if ( oldInd == ""){
@@ -218,20 +219,21 @@ require(
       // input to the agent
       var responseNotes =  transcription[transcription.length-1],
           schedule = timing[timing.length-1];
-      
-      //var inputNote = responseNotes[0];
-      //var agentResponse = markovAgent(transcription,inputNote);
-      //var response = eliza(transcription);
 
       //agent response
-      var response = eliza(responseNotes, schedule)
+      //var response = eliza(responseNotes, schedule)
       
       console.log("original schedule is" + schedule);
-      schedule = response["schedule"];
-      var agentResponse = response["pitch"];
+      //schedule = response["schedule"];
+      //var agentResponse = response["pitch"];
       //console.log("new schedule is" + schedule);
-
-
+      
+      schedule = [0,200,400,600,1400,1600];
+      agentResponse = [0,2,3,5,3];
+      loudness = [0.5,0.5,0.5,0.8,0.5,0];
+      gain.gain.value = 0.001 ; //setValue(0.001);
+      playPentatonic(agentResponse,schedule,loudness);
+      
       // agents output
       document.getElementById("output").value += agentResponse.map(function(el){return utils.number2Note(el);}).reduce(function(s1,s2) {return s1 + "," + s2;}) + ",|,"
 
@@ -245,48 +247,51 @@ require(
       document.getElementById("combined").value += ",|," + agentResponse.map(function(el){return utils.number2Note(el);}).join(","); 
 
       // scheduleing time
-      console.log("schedule time is" + prevTime)
+      //console.log("schedule time is" + prevTime)
       
-      // acts a trigger for the notes
-      agentResponse.map( function (el, i, arr){
-        if( el!=0 && !el ){
-          //nothing
-        }
-        //schedule notes by adding them to the time of the last played
-        //note
-        // else if( i == arr.length){
-        //   triggerSound( context, el, prevTime + schedule[i]);
-        //   stopSound( schedule[i]+ 0.5);
-        // }
+      // // acts a trigger for the notes
+      // agentResponse.map( function (el, i, arr){
+      //   if( el!=0 && !el ){
+      //     //nothing
+      //   }
+      //   //schedule notes by adding them to the time of the last played
+      //   //note
+      //   // else if( i == arr.length){
+      //   //   triggerSound( context, el, prevTime + schedule[i]);
+      //   //   stopSound( schedule[i]+ 0.5);
+      //   // }
 
-        //schedule notes by triggering frequencies at time of the last
-        //played note
-        else {
-          //console.log("triggering at" + prevTime + schedule[i]);
-          triggerSound( context, el, prevTime + schedule[i]);
-          //var noteNum = findNote(el);
-          // var osc = basicOsc(el);
-          // //console.log("ele" + el)
-          // setTimeout( function(){osc.play();}, schedule[i]);
-          // setTimeout(function(){osc.release();},schedule[i+1]);
-        }
-        console.log("note" + el + " scheduled at" + (prevTime + schedule[i]))
-      });
+      //   //schedule notes by triggering frequencies at time of the last
+      //   //played note
+      //   else {
+      //     //console.log("triggering at" + prevTime + schedule[i]);
+      //     //triggerSound( context, el, prevTime + schedule[i]);
+      //     //var noteNum = findNote(el);
+      //     var osc = basicOsc(el);
+      //     // //console.log("ele" + el)
+      //     setTimeout( function(){osc.play();}, schedule[i]);
+      //     setTimeout(function(){osc.release();},schedule[i+1]);
+      //   }
+      //   console.log("note" + el + " scheduled at" + (prevTime + schedule[i]))
+  // });
+  
     }
     
     //-------triggering the sounds within audio context -----//
 
+    
     //trigger sound sets the frequency of the sounding oscillator at
     //given time,
     function triggerSound (context,noteNum, startTime){
       
       console.log("triggering sound" + noteNum);
       //var now = context.currentTime;
+      gain.gain.value = 0.5 ; //setValue(0.5);
       var frequency = 220*Math.pow(2, noteNum/12);
       osc.frequency.setValueAtTime(frequency, startTime);
       //gain.gain.setValue(0.1);
     }
-
+    
     // sets up the oscillator and gain for playing sounds.
     function soundSetup(context){
       
@@ -300,13 +305,36 @@ require(
     }
 
     function startSound(startTime){
+      var schedule = [0,200,400,600,1400,1600];
+      var agentResponse = [0,2,3,5,3];
+      var loudness = [0.25,0.25,0.5,0.8,0.5,0];
+      playPentatonic(agentResponse, schedule,loudness);
+      gain.gain.value = 0.001 ; //setValue(0.001);
       osc.start(startTime);
     }
     
     // stops the sound at a given time.
     function stopSound (endTime){
       gain.gain.setValueAtTime(0.001, endTime) ; //make gain 0
-    } 
+    }
+
+    //play pentatonic
+    function playPentatonic (notes,schedule,loudness){
+
+      // acts a trigger for the notes
+      notes.map( function (el, i, arr){
+        if( el!=0 && !el ){
+          //nothing
+        }
+        else {
+          var osc = basicOsc(el);
+          setTimeout( function(){osc.setParam("Gain", loudness[i]); osc.play();}, schedule[i]);
+          setTimeout(function(){osc.release();},schedule[i+1]);
+        }
+      });
+    }
+
+    
     /// ------------ Timers -------------------------------
 
     //current timer - or the now row
